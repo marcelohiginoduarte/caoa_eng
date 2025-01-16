@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+
+
+{% block material %}
+    <h2>Ver Todos Serviços</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">cliente</th>
+                <th scope="col">telefone</th>
+                <th scope="col">tipo_serviço</th>
+                <th scope="col">status</th>
+                <th scope="col">valor empreendimento</th>
+                <th scope="col">Valor custos</th>
+                <th scope="col">Valor lucro</th>
+                <th scope="col">Email</th>
+                <th scope="col">Mês</th>
+                <th scope="col">Ano</th>
+                <th scope="col">foto_documento</th>
+                <th scope="col">comoprovante endereco</th>
+                <th scope="col">comoprovante renda</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Remover</th>
+            </tr>
+        </thead>
+        {% for sv in todo_servico %}
+            <tr>
+                <td><a href="#">{{sv.cliente}}</a></td>
+                <td>{{sv.telefone}}</td>
+                <td>{{sv.tipo_serviço}}</td>
+                <td>{{ sv.status}}</td>
+                <td>R${{ sv.valor_empreendimento}}</td>
+                <td>R${{sv.valor_custos}}</td>
+                <td>R${{ sv.valor_lucro}}</td>
+                <td>{{ sv.email}}</td>
+                <td>{{ sv.mes}}</td>
+                <td>{{ sv.ano}}</td>
+                <td>{{ sv.foto_documento}}</td>
+                <td>{{ sv.comoprovante_endereco}}</td>
+                <td>{{ sv.comoprovante_renda}}</td>
+                <td><a href="{% url 'editar_servico' sv.id %}">Editar</a></td>
+                <td><a href="#">Remover</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
