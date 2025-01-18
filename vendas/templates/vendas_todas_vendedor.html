@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+
+
+{% block material %}
+    <h2>Todas as vendas {{user_name}}</h2>
+    
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td, th {
+            word-wrap: nowrap;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    </style>
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">cliente</th>
+                <th scope="col">servico</th>
+                <th scope="col">telefone</th>
+                <th scope="col">consumo</th>
+                <th scope="col">valor Empreendimento</th>
+                <th scope="col">comissão</th>
+                <th scope="col">email</th>
+                <th scope="col">Status Venda</th>
+                <th scope="col">Status Pagamento VD</th>
+                <th scope="col">foto_documento</th>
+                <th scope="col">foto_endereco</th>
+                <th scope="col">foto_contracheque</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Remover</th>
+            </tr>
+        </thead>
+        {% for venda in vendas %}
+            <tr>
+                <td><a href="#">{{venda.cliente}}</a></td>
+                <td>{{venda.servico}}</td>
+                <td>{{venda.telefone}}</td>
+                <td>KWH {{ venda.consumo}}</td>
+                <td>R${{ venda.formatar_valor}}</td>
+                <td>R${{ venda.formatar_comissao}}</td>
+                <td>{{venda.email}}</td>
+                <td><a href="{% url 'alterar_status_venda' venda.id %}">{{ venda.status_venda}}</a></td>
+                <td><a href="{% url 'alterar_status_venda' venda.id %}">{{ venda.status_pg_vendedor}}</a></td>
+                <td>{{ venda.foto_documento}}</td>
+                <td>{{ venda.foto_endereco}}</td>
+                <td>{{ venda.foto_contracheque}}</td>
+                <td><a href="#">Editar</a></td>
+                <td><a href="#">Remover</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

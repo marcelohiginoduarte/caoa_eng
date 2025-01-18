@@ -17,3 +17,12 @@ class VendasExternasForms(forms.ModelForm):
                     'foto_endereco',
                     'foto_contracheque',
                 ]
+        
+
+class Alterar_status_vendas(forms.ModelForm):
+    class Meta:
+        model = Venda
+        fields = [
+                'status_venda',
+                'status_pg_vendedor',
+                ]

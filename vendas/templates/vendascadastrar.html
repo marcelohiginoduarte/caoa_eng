@@ -2,7 +2,7 @@
 
 
 {% block material %}
-    <h2>Cadastrar Vendas</h2>
+    <h2>Cadastrar Vendas {{user_name}}</h2>
     <br>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
