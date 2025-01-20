@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Venda
 from .forms import VendasExternasForms, Alterar_status_vendas
@@ -43,3 +44,17 @@ def status_vendas(request, venda_id):
                                                     'consumo': consumo,
                                                     'valor': valor
                                                     })
+
+def detalhe_vendas(request, id):
+    venda_detalhe = get_object_or_404(Venda, id=id)
+    data = {
+        "cliente": venda_detalhe.cliente,
+        "servico": venda_detalhe.servico,
+        "telefone": venda_detalhe.telefone,
+        "consumo": venda_detalhe.consumo,
+        "valor_empreendimento": venda_detalhe.formatar_valor,
+        "comissao": venda_detalhe.formatar_comissao,
+        "status_venda": venda_detalhe.status_venda,
+        "status_pagamento": venda_detalhe.status_pg_vendedor,
+    }
+    return JsonResponse(data)
