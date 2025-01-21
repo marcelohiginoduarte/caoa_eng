@@ -60,6 +60,8 @@ class Venda(models.Model):
     foto_documento = models.FileField(upload_to='documentos/')
     foto_endereco = models.FileField(upload_to='documentos/')
     foto_contracheque = models.FileField(upload_to='documentos/')
+    proposta = models.FileField(upload_to='documentos/', blank=True, null=True)
+    contrato = models.FileField(upload_to='documentos/',blank=True, null=True)
 
     
     def save(self, *args, **kwargs):

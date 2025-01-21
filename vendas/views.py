@@ -16,9 +16,30 @@ def CadastrarVenda(request):
     return render(request, 'vendascadastrar.html', {'form': form})
 
 
+from django.db.models import Q
+
 def vendas_vendedor_logado(request):
+    
+    query = request.GET.get('q', '')  
+    
+    
     vendas = Venda.objects.filter(vendendor=request.user.username)
-    return render(request, 'vendas_todas_vendedor.html', {'vendas': vendas, 'user_name': request.user.get_full_name() or request.user.username})
+    
+    
+    if query:
+        vendas = vendas.filter(
+            Q(cliente__icontains=query) | Q(servico__icontains=query)
+        )
+    
+    return render(
+        request,
+        'vendas_todas_vendedor.html',
+        {
+            'vendas': vendas,
+            'user_name': request.user.get_full_name() or request.user.username,
+            'query': query,
+        }
+        )
 
 
 

@@ -4,6 +4,19 @@
 {% block material %}
     <h2>Todas as vendas {{user_name}}</h2>
     
+    <div>
+        <form method="GET" action="">
+            <input 
+                type="text" 
+                name="q" 
+                placeholder="Pesquisar por cliente ou serviço" 
+                value="{{ query|default:'Digite o nome do cliente' }}" 
+                class="form-control">
+            <button type="submit" class="btn btn-primary mt-2">Pesquisar</button>
+        </form>
+    </div>
+
+
     <style>
         table {
             table-layout: fixed;

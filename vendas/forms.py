@@ -18,6 +18,8 @@ class VendasExternasForms(forms.ModelForm):
                     'foto_documento',
                     'foto_endereco',
                     'foto_contracheque',
+                    'proposta',
+                    'contrato',
                 ]
         
 
