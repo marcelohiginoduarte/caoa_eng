@@ -13,6 +13,8 @@ class VendasExternasForms(forms.ModelForm):
                     'vendendor', 
                     'valor',
                     'consumo',
+                    'mes',
+                    'ano',
                     'foto_documento',
                     'foto_endereco',
                     'foto_contracheque',

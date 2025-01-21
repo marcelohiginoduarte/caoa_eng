@@ -29,6 +29,21 @@ class Venda(models.Model):
         
     ]
 
+    Mes = [
+        ('Jan', 'Jan'),
+        ('Fev', 'Fev'),
+        ('Mar', 'Mar'),
+        ('Abr', 'Abr'),
+        ('Mai', 'Mai'),
+        ('Jun', 'Jun'),
+        ('Jul', 'Jul'),
+        ('Ago', 'Ago'),
+        ('Set', 'Set'),
+        ('Out', 'Out'),
+        ('Nov', 'Nov'),
+        ('Dez', 'Dez'),
+    ]
+
 
     cliente = models.CharField(max_length=150, blank=False, null=False)
     servico = models.CharField(choices=tipo_servico, max_length=15, blank=False, null=False)
@@ -37,6 +52,8 @@ class Venda(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     comissao = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
+    mes = models.CharField(max_length=4, choices=Mes)
+    ano = models.CharField(max_length=4, blank=True)
     vendendor = models.CharField(max_length=150, blank=True)
     status_venda = models.CharField(choices=status_vendas, max_length=15, blank=False, null=False, default='env_banc')
     status_pg_vendedor = models.CharField(choices=pagamento_vendedor, max_length=15, blank=False, null=False, default='agr_vd')

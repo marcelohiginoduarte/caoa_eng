@@ -29,9 +29,6 @@
                 <th scope="col">Comissão</th>
                 <th scope="col">Status Venda</th>
                 <th scope="col">Status Pagamento VD</th>
-                <th scope="col">Foto Documento</th>
-                <th scope="col">Foto Endereço</th>
-                <th scope="col">Foto Contracheque</th>
                 <th scope="col">Editar</th>
                 <th scope="col">Remover</th>
             </tr>
@@ -40,36 +37,15 @@
             {% for venda in vendas %}
             <tr>
                 <td>
-                    <a href="#" class="open-details" data-id="{{ venda.id }}">{{ venda.cliente }}</a>
+                    <a href="{% url 'detalhes_venda' venda.id %}" class="open-details" data-id="{{ venda.id }}">{{ venda.cliente }}</a>
                 </td>
                 <td>{{ venda.servico }}</td>
                 <td>{{ venda.telefone }}</td>
                 <td>KWH {{ venda.consumo }}</td>
                 <td>R${{ venda.formatar_valor }}</td>
                 <td>R${{ venda.formatar_comissao }}</td>
-                <td>{{ venda.status_venda }}</td>
-                <td>{{ venda.status_pg_vendedor }}</td>
-                <td>
-                    {% if venda.foto_documento %}
-                    <a href="{{ venda.foto_documento.url }}" target="_blank">Documento</a>
-                    {% else %}
-                    —
-                    {% endif %}
-                </td>
-                <td>
-                    {% if venda.foto_endereco %}
-                    <a href="{{ venda.foto_endereco.url }}" target="_blank">Endereço</a>
-                    {% else %}
-                    —
-                    {% endif %}
-                </td>
-                <td>
-                    {% if venda.foto_contracheque %}
-                    <a href="{{ venda.foto_contracheque.url }}" target="_blank">Ct Cheque</a>
-                    {% else %}
-                    —
-                    {% endif %}
-                </td>
+                <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_venda }}</a></td>
+                <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_pg_vendedor }}</a></td>
                 <td><a href="#">Editar</a></td>
                 <td><a href="#">Remover</a></td>
             </tr>
@@ -78,12 +54,12 @@
     </table>
 </div>
 
-<!-- Modal HTML -->
+
 <div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Detalhes do Cliente</h5>
+                <h5 class="modal-title" id="detailsModalLabel">Detalhes do Cliente {{cliente}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -98,34 +74,41 @@
 
 <script>
     document.querySelectorAll('.open-details').forEach(link => {
-    link.addEventListener('click', function(event) {
-        event.preventDefault();
-        const vendaId = this.dataset.id;
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const vendaId = this.dataset.id;
 
-        // Fazer a requisição para buscar os detalhes
-        fetch(`/venda/${vendaId}/detalhes/`)
-            .then(response => response.json())
-            .then(data => {
-                // Preencher os detalhes com os valores retornados
-                const detalhes = `
-                    <strong>Cliente:</strong> ${data.cliente} <br>
-                    <strong>Serviço:</strong> ${data.servico} <br>
-                    <strong>Telefone:</strong> ${data.telefone} <br>
-                    <strong>Consumo:</strong> KWH ${data.consumo} <br>
-                    <strong>Valor Empreendimento:</strong> R$ ${data.valor_empreendimento} <br>
-                    <strong>Comissão:</strong> R$ ${data.comissao} <br>
-                    <strong>Status Venda:</strong> ${data.status_venda} <br>
-                    <strong>Status Pagamento:</strong> ${data.status_pagamento} <br>
-                `;
-                document.getElementById('detailsContent').innerHTML = detalhes;
+            
+            fetch(`/vendas/vendas/${vendaId}/detalhes/`)
+                .then(response => response.json())
+                .then(data => {
+                    
+                    const detalhes = `
+                        <strong>Cliente:</strong> ${data.cliente} <br>
+                        <strong>Serviço:</strong> ${data.servico} <br>
+                        <strong>Telefone:</strong> ${data.telefone} <br>
+                        <strong>Consumo:</strong> KWH ${data.consumo} <br>
+                        <strong>Email:</strong> ${data.email} <br>
+                        <strong>Vendedor:</strong> ${data.vendendor} <br>
+                        <strong>Mes:</strong> ${data.mes} <br>
+                        <strong>Ano:</strong> ${data.ano} <br>
+                        <strong>Valor Empreendimento:</strong> R$ ${data.valor} <br>
+                        <strong>Valor Comissão:</strong> R$ ${data.comissao} <br>
+                        <strong>Status Venda:</strong> ${data.status_venda} <br>
+                        <strong>Status Pagamento:</strong> ${data.status_pagamento} <br>
+                        <strong>Documento Cliente:</strong>  ${data.foto_documento} <br>
+                        <strong>Comprovante de Enderaço:</strong> ${data.foto_endereco} <br>
+                        <strong>Comprovante de Renda:</strong> ${data.foto_contracheque} <br>
+                    `;
+                    document.getElementById('detailsContent').innerHTML = detalhes;
 
-                // Exibir o modal
-                const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error('Erro ao buscar os detalhes:', error);
-                document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar os detalhes:', error);
+                    document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
             });
     });
 });

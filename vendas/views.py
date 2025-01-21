@@ -45,6 +45,7 @@ def status_vendas(request, venda_id):
                                                     'valor': valor
                                                     })
 
+
 def detalhe_vendas(request, id):
     venda_detalhe = get_object_or_404(Venda, id=id)
     data = {
@@ -52,9 +53,16 @@ def detalhe_vendas(request, id):
         "servico": venda_detalhe.servico,
         "telefone": venda_detalhe.telefone,
         "consumo": venda_detalhe.consumo,
-        "valor_empreendimento": venda_detalhe.formatar_valor,
-        "comissao": venda_detalhe.formatar_comissao,
+        "email": venda_detalhe.email,
+        "vendendor": venda_detalhe.vendendor,
+        "mes": venda_detalhe.mes,
+        "ano": venda_detalhe.ano,
+        "valor": venda_detalhe.formatar_valor(),
+        "comissao": venda_detalhe.formatar_comissao(),
         "status_venda": venda_detalhe.status_venda,
         "status_pagamento": venda_detalhe.status_pg_vendedor,
+        "foto_documento": venda_detalhe.foto_documento.url if venda_detalhe.foto_documento else None,
+        "foto_endereco": venda_detalhe.foto_endereco.url if venda_detalhe.foto_endereco else None,
+        "foto_contracheque": venda_detalhe.foto_contracheque.url if venda_detalhe.foto_contracheque else None,
     }
     return JsonResponse(data)
