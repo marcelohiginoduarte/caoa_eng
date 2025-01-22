@@ -11,28 +11,28 @@ class Servico(models.Model):
     ]
 
     status_servico = [
-        ('Visita' ,'V'),
-        ('Iniciado' ,'I'),
-        ('Contrato' , 'Co'),
-        ('Andamento', 'A'),
-        ('Execucao', 'E'),
-        ('Concluido' ,'C'),
-        ('Pendente' ,'P'),
+        ('V' ,'Visita'),
+        ('I' ,'Iniciado'),
+        ('Co' ,'Contrato'),
+        ('A' ,'Andamento'),
+        ('E' ,'Execucao'),
+        ('C' ,'Concluido'),
+        ('P' ,'Pendente'),
     ]
 
     Mes = [
-        ('Jan', 'Jan'),
-        ('Fev', 'Fev'),
-        ('Mar', 'Mar'),
-        ('Abr', 'Abr'),
-        ('Mai', 'Mai'),
-        ('Jun', 'Jun'),
-        ('Jul', 'Jul'),
-        ('Ago', 'Ago'),
-        ('Set', 'Set'),
-        ('Out', 'Out'),
-        ('Nov', 'Nov'),
-        ('Dez', 'Dez'),
+    ('January', 'Jan'),
+    ('February', 'Feb'),
+    ('March', 'Mar'),
+    ('April', 'Apr'),
+    ('May', 'May'),
+    ('June', 'Jun'),
+    ('July', 'Jul'),
+    ('August', 'Aug'),
+    ('September', 'Sep'),
+    ('October', 'Oct'),
+    ('November', 'Nov'),
+    ('December', 'Dec'),
     ]
 
     cliente = models.CharField(max_length=150, null=False, blank=False)
@@ -43,7 +43,7 @@ class Servico(models.Model):
     valor_custos = models.DecimalField(max_digits=10, decimal_places=2)
     valor_lucro = models.DecimalField(max_digits=10, decimal_places=2)
     email = models.EmailField(blank=False, null=False)
-    mes = models.CharField(max_length=4, choices=Mes)
+    mes = models.CharField(max_length=10, choices=Mes)
     ano = models.CharField(max_length=4, blank=True)
     foto_documento = models.FileField(upload_to='documentos/')
     comoprovante_endereco = models.FileField(upload_to='documentos/')

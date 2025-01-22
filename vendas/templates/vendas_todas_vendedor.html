@@ -4,19 +4,23 @@
 {% block material %}
     <h2>Todas as vendas {{user_name}}</h2>
     
-    <div>
-        <form method="GET" action="">
+<div class="container">
+    <form method="GET" action="" class="row">
+        <div class="col-md-8 col-lg-6 mb-2">
             <input 
                 type="text" 
                 name="q" 
                 placeholder="Pesquisar por cliente ou serviço" 
                 value="{{ query|default:'Digite o nome do cliente' }}" 
                 class="form-control">
-            <button type="submit" class="btn btn-primary mt-2">Pesquisar</button>
-        </form>
-    </div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
+        </div>
+    </form>
+</div>
 
-
+    <br>
     <style>
         table {
             table-layout: fixed;
@@ -59,8 +63,8 @@
                 <td>R${{ venda.formatar_comissao }}</td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_venda }}</a></td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_pg_vendedor }}</a></td>
-                <td><a href="#">Editar</a></td>
-                <td><a href="#">Remover</a></td>
+                <td><a href="{% url 'atualizarvendas' pk=venda.id %}">Editar</a></td>
+                <td><a href="{% url 'deletarvenda' pk=venda.id %}">Remover</a></td>
             </tr>
             {% endfor %}
         </tbody>

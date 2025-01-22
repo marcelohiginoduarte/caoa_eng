@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+
+
+{% block material %}
+
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-info" type="submit">Confirmar Exclusão</button>
+        <a href="{% url 'vendasporvendedor' %}">Cancelar</a>  
+    </form>
+{% endblock %}

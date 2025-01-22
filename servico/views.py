@@ -1,12 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum
 from .forms import CadastrarServicoforms
 from .models import Servico
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
+from django.utils.timezone import now
+
 
 def home(request):
     return render(request, 'index.html')
 
 def dash_servico(request):
-    return render(request, 'home.html')
+    
+    data_atual = now()
+    mes_atual = data_atual.month
+    ano_atual = data_atual.year
+    total_valor_vendido_mes = Servico.objects.filter(
+        ano=ano_atual, 
+        mes=mes_atual,
+    ).aggregate(total=Sum('valor_empreendimento'))['total'] or 0
+    total_valor_vendido = Servico.objects.aggregate(total=Sum('valor_empreendimento'))['total'] or 0
+    context = {'total_valor_vendido':total_valor_vendido,
+            'total_valor_vendido_mes':total_valor_vendido_mes,
+            }
+    return render(request, 'home.html', context)
 
 def cadastrar_servico(request):
     
@@ -35,3 +52,9 @@ def editar_servico(request, servico_id):
     else:
         form = CadastrarServicoforms(instance=servico)
     return render(request, 'servico_editar.html', {'form': form})
+
+
+class DeletarServico(DeleteView):
+    model = Servico
+    template_name = 'servico__confirm_delete.html'
+    success_url = reverse_lazy('todos_servicos')

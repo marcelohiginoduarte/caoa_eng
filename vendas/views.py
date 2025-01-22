@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from .models import Venda
 from .forms import VendasExternasForms, Alterar_status_vendas
+from django.views.generic import DeleteView, UpdateView
 
 
 def CadastrarVenda(request):
@@ -19,18 +21,13 @@ def CadastrarVenda(request):
 from django.db.models import Q
 
 def vendas_vendedor_logado(request):
-    
     query = request.GET.get('q', '')  
-    
-    
     vendas = Venda.objects.filter(vendendor=request.user.username)
-    
-    
     if query:
         vendas = vendas.filter(
             Q(cliente__icontains=query) | Q(servico__icontains=query)
         )
-    
+
     return render(
         request,
         'vendas_todas_vendedor.html',
@@ -87,3 +84,16 @@ def detalhe_vendas(request, id):
         "foto_contracheque": venda_detalhe.foto_contracheque.url if venda_detalhe.foto_contracheque else None,
     }
     return JsonResponse(data)
+
+
+class AtualizarVenda(UpdateView):
+    model = Venda
+    template_name = 'venda_atualizar.html'
+    form_class = VendasExternasForms
+    success_url = reverse_lazy('vendasporvendedor')
+
+
+class DeletarVenda(DeleteView):
+    model = Venda
+    template_name = 'venda__confirm_delete.html'
+    success_url = reverse_lazy('vendasporvendedor')

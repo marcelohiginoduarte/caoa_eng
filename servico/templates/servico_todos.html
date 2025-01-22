@@ -36,11 +36,11 @@
                 <td>{{ sv.email}}</td>
                 <td>{{ sv.mes}}</td>
                 <td>{{ sv.ano}}</td>
-                <td>{{ sv.foto_documento}}</td>
-                <td>{{ sv.comoprovante_endereco}}</td>
-                <td>{{ sv.comoprovante_renda}}</td>
+                <td><a href="{{sv.foto_documento.url}}">Baixa DOC</a></td>
+                <td><a href="{{ sv.comoprovante_endereco.url}}">Baixar</a></td>
+                <td><a href="{{ sv.comoprovante_renda.url}}">Baixar</a></td>
                 <td><a href="{% url 'editar_servico' sv.id %}">Editar</a></td>
-                <td><a href="#">Remover</a></td>
+                <td><a href="{% url 'deletarservico' pk=sv.id %}">Remover</a></td>
             </tr>
         {% endfor %}
     </table>
