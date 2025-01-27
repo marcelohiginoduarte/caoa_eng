@@ -9,6 +9,7 @@ urlpatterns = [
     path('', home, name='home_principal'),
     path('servico/', include('servico.urls')),
     path('vendas/', include('vendas.urls')),
+    path('vendedor', include('lista_vendedores.urls')),
 ]
 
 if settings.DEBUG:

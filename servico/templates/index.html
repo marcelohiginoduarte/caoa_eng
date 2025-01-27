@@ -63,6 +63,21 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapserelatorios"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Relatorios</span>
+                </a>
+                <div id="collapserelatorios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Relatorios:</h6>
+                        <a class="collapse-item" href="#">Relatorios de Vendas</a>
+                        <a class="collapse-item" href="#">Relatorios de Vendedores</a>
+                        <a class="collapse-item" href="#">Relatorios de Serviços</a>
+                    </div>
+                </div>
+            </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
@@ -77,6 +92,21 @@
                         <h6 class="collapse-header">Gestão Vendas</h6>
                         <a class="collapse-item" href="{% url 'Cadastrar_vendas' %}">Cadastrar Vendas</a>
                         <a class="collapse-item" href="{% url 'vendasporvendedor' %}">Ver todas vendas</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilitiess"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Vendedores</span>
+                </a>
+                <div id="collapseUtilitiess" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestão Vendas</h6>
+                        <a class="collapse-item" href="#">Cadastrar Vendedor</a>
+                        <a class="collapse-item" href="#">Gestão Vendedor</a>
                     </div>
                 </div>
             </li>

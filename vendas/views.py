@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from .models import Venda
 from .forms import VendasExternasForms, Alterar_status_vendas
 from django.views.generic import DeleteView, UpdateView
+from django.core.paginator import Paginator
 
 
 def CadastrarVenda(request):
@@ -27,6 +28,11 @@ def vendas_vendedor_logado(request):
         vendas = vendas.filter(
             Q(cliente__icontains=query) | Q(servico__icontains=query)
         )
+
+    # Configurar paginação
+    paginator = Paginator(vendas, 10)  # 10 itens por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,

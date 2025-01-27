@@ -2,6 +2,7 @@ from django.db import models
 from servico.validators import validar_telefone
 from decimal import Decimal
 from .utils import calcular_comissao, formatar_valor_comissao
+from servico.models import Servico
 
 class Venda(models.Model):
 
@@ -65,8 +66,28 @@ class Venda(models.Model):
 
     
     def save(self, *args, **kwargs):
+        if self.pk:
+            venda_antiga = Venda.objects.get(pk=self.pk)
+            if venda_antiga.status_venda != self.status_venda and self.status_venda == 'aprov_banc':
+                Servico.objects.create(
+                    cliente=self.cliente,
+                    telefone=self.telefone,
+                    tipo_serviço=self.servico,
+                    status='V',
+                    valor_empreendimento=self.valor,
+                    valor_custos=Decimal(self.valor) * Decimal('0.7'),  
+                    valor_lucro=Decimal(self.valor) * Decimal('0.3'),                   
+                    email=self.email,
+                    mes=self.mes,
+                    ano=self.ano,
+                    foto_documento=self.foto_documento,
+                    comoprovante_endereco=self.foto_endereco,
+                    comoprovante_renda=self.foto_contracheque,
+                )
+
         if self.valor:
             self.comissao = calcular_comissao(self.valor)
+
         super().save(*args, **kwargs)
 
     def clean(self):
