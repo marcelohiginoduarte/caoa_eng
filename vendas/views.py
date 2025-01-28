@@ -24,15 +24,19 @@ from django.db.models import Q
 
 def vendas_vendedor_logado(request):
     query = request.GET.get('q', '')  
-    vendedor = get_object_or_404(ListaVendedores, nome=request.user.username)
-    vendas = Venda.objects.filter(vendedor=vendedor)
+    
+    if request.user.is_superuser:
+        vendas = Venda.objects.all()
+    else:
+        vendedor = get_object_or_404(ListaVendedores, nome=request.user.username)
+        vendas = Venda.objects.filter(vendedor=vendedor)  # Filtro por vendedor
+    
     if query:
         vendas = vendas.filter(
             Q(cliente__icontains=query) | Q(servico__icontains=query)
         )
 
-    # Configurar paginação
-    paginator = Paginator(vendas, 10)  # 10 itens por página
+    paginator = Paginator(vendas, 10) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -43,8 +47,8 @@ def vendas_vendedor_logado(request):
             'vendas': vendas,
             'user_name': request.user.get_full_name() or request.user.username,
             'query': query,
-        }
-        )
+            'page_obj': page_obj,          }
+    )
 
 
 

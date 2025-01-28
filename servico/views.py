@@ -11,9 +11,25 @@ def home(request):
     return render(request, 'index.html')
 
 def dash_servico(request):
+
+    Mes = [
+        ('January', 'Jan'),
+        ('February', 'Feb'),
+        ('March', 'Mar'),
+        ('April', 'Apr'),
+        ('May', 'May'),
+        ('June', 'Jun'),
+        ('July', 'Jul'),
+        ('August', 'Aug'),
+        ('September', 'Sep'),
+        ('October', 'Oct'),
+        ('November', 'Nov'),
+        ('December', 'Dec'),
+    ]
     
     data_atual = now()
-    mes_atual = data_atual.month
+    mes_atual = Mes[data_atual.month -1][1]
+    print(mes_atual)
     ano_atual = data_atual.year
     total_valor_vendido_mes = Servico.objects.filter(
         ano=ano_atual, 
