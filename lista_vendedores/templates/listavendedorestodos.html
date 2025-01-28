@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+
+
+{% block material %}
+    <h2>Lista de Vendedores</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">telefone</th>
+                <th scope="col">pix</th>
+                <th scope="col">comissao</th>
+                <th scope="col">total Vendido</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Remover</th>
+            </tr>
+        </thead>
+        {% for vendedor in ver_vendedores %}
+            <tr>
+                <td><a href="#">{{vendedor.nome}}</a></td>
+                <td>{{vendedor.Telefone}}</td>
+                <td>{{vendedor.pix}}</td>
+                <td>{{vendedor.comissao_venda}}%</td>
+                <td>{{vendedor.comissao_venda}}%</td>
+                <td><a href="#">Editar</a></td>
+                <td><a href="#">Remover</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
