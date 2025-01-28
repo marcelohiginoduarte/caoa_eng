@@ -6,7 +6,7 @@ from .forms import VendasExternasForms, Alterar_status_vendas
 from django.views.generic import DeleteView, UpdateView
 from django.core.paginator import Paginator
 from lista_vendedores.models import ListaVendedores
-
+from django.db.models import Q
 
 def CadastrarVenda(request):
     if request.method == 'POST':
@@ -20,17 +20,14 @@ def CadastrarVenda(request):
     return render(request, 'vendascadastrar.html', {'form': form})
 
 
-from django.db.models import Q
-
 def vendas_vendedor_logado(request):
     query = request.GET.get('q', '')  
-    
     if request.user.is_superuser:
-        vendas = Venda.objects.all()
+        vendas = Venda.objects.all()  
     else:
         vendedor = get_object_or_404(ListaVendedores, nome=request.user.username)
-        vendas = Venda.objects.filter(vendedor=vendedor)  # Filtro por vendedor
-    
+        vendas = Venda.objects.filter(vendedor=vendedor)
+
     if query:
         vendas = vendas.filter(
             Q(cliente__icontains=query) | Q(servico__icontains=query)
@@ -44,12 +41,12 @@ def vendas_vendedor_logado(request):
         request,
         'vendas_todas_vendedor.html',
         {
-            'vendas': vendas,
+            'vendas': page_obj,
             'user_name': request.user.get_full_name() or request.user.username,
             'query': query,
-            'page_obj': page_obj,          }
+            'is_admin': request.user.is_superuser,
+        }
     )
-
 
 
 def status_vendas(request, venda_id):
@@ -78,24 +75,27 @@ def status_vendas(request, venda_id):
 
 def detalhe_vendas(request, id):
     venda_detalhe = get_object_or_404(Venda, id=id)
+    
     data = {
         "cliente": venda_detalhe.cliente,
         "servico": venda_detalhe.servico,
         "telefone": venda_detalhe.telefone,
         "consumo": venda_detalhe.consumo,
         "email": venda_detalhe.email,
-        "vendendor": venda_detalhe.vendendor,
+        "vendedor": venda_detalhe.vendedor.id if venda_detalhe.vendedor else None, 
         "mes": venda_detalhe.mes,
         "ano": venda_detalhe.ano,
-        "valor": venda_detalhe.formatar_valor(),
-        "comissao": venda_detalhe.formatar_comissao(),
+        "valor": venda_detalhe.formatar_valor() if hasattr(venda_detalhe, 'formatar_valor') else venda_detalhe.valor,
+        "comissao": venda_detalhe.formatar_comissao() if hasattr(venda_detalhe, 'formatar_comissao') else venda_detalhe.comissao,
         "status_venda": venda_detalhe.status_venda,
         "status_pagamento": venda_detalhe.status_pg_vendedor,
         "foto_documento": venda_detalhe.foto_documento.url if venda_detalhe.foto_documento else None,
         "foto_endereco": venda_detalhe.foto_endereco.url if venda_detalhe.foto_endereco else None,
         "foto_contracheque": venda_detalhe.foto_contracheque.url if venda_detalhe.foto_contracheque else None,
     }
+    
     return JsonResponse(data)
+
 
 
 class AtualizarVenda(UpdateView):

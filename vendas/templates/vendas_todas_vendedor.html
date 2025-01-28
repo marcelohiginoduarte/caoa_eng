@@ -2,7 +2,7 @@
 
 
 {% block material %}
-    <h2>Todas as vendas {{user_name}}</h2>
+    <h2>Todas as vendas</h2>
     
 <div class="container">
     <form method="GET" action="" class="row">
@@ -20,6 +20,15 @@
     </form>
 </div>
 
+{% if is_admin %}
+    <div class="alert alert-info">
+        <strong>Admin:</strong> Você está visualizando todas as vendas.
+    </div>
+{% else %}
+    <div class="alert alert-warning">
+        Exibindo vendas atribuídas ao vendedor {{ user_name }}.
+    </div>
+{% endif %}
 
 <div class="pagination-container">
     <nav aria-label="Paginação">
@@ -52,6 +61,7 @@
         </ul>
     </nav>
 </div>
+
 
     <br>
     <style>
@@ -146,9 +156,12 @@
                         <strong>Valor Comissão:</strong> R$ ${data.comissao} <br>
                         <strong>Status Venda:</strong> ${data.status_venda} <br>
                         <strong>Status Pagamento:</strong> ${data.status_pagamento} <br>
-                        <strong>Documento Cliente:</strong>  ${data.foto_documento} <br>
-                        <strong>Comprovante de Enderaço:</strong> ${data.foto_endereco} <br>
-                        <strong>Comprovante de Renda:</strong> ${data.foto_contracheque} <br>
+                        <strong>Documento Cliente:</strong>  
+                        ${data.foto_documento ? `<a href="${data.foto_documento}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
+                        <strong>Comprovante de Endereço:</strong>  
+                        ${data.foto_endereco ? `<a href="${data.foto_endereco}" target="_blank">Ver Comprovante</a>` : 'Não enviado'} <br>
+                        <strong>Comprovante de Renda:</strong>  
+                        ${data.foto_contracheque ? `<a href="${data.foto_contracheque}" target="_blank">Ver Comprovante</a>` : 'Não enviado'} <br>
                     `;
                     document.getElementById('detailsContent').innerHTML = detalhes;
 
