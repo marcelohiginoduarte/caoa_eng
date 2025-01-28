@@ -10,7 +10,7 @@ class VendasExternasForms(forms.ModelForm):
                     'servico', 
                     'telefone', 
                     'email', 
-                    'vendendor', 
+                    'vendedor', 
                     'valor',
                     'consumo',
                     'mes',

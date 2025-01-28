@@ -5,6 +5,7 @@ from .models import Venda
 from .forms import VendasExternasForms, Alterar_status_vendas
 from django.views.generic import DeleteView, UpdateView
 from django.core.paginator import Paginator
+from lista_vendedores.models import ListaVendedores
 
 
 def CadastrarVenda(request):
@@ -23,7 +24,8 @@ from django.db.models import Q
 
 def vendas_vendedor_logado(request):
     query = request.GET.get('q', '')  
-    vendas = Venda.objects.filter(vendendor=request.user.username)
+    vendedor = get_object_or_404(ListaVendedores, nome=request.user.username)
+    vendas = Venda.objects.filter(vendedor=vendedor)
     if query:
         vendas = vendas.filter(
             Q(cliente__icontains=query) | Q(servico__icontains=query)

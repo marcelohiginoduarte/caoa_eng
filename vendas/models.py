@@ -3,6 +3,7 @@ from servico.validators import validar_telefone
 from decimal import Decimal
 from .utils import calcular_comissao, formatar_valor_comissao
 from servico.models import Servico
+from lista_vendedores.models import ListaVendedores
 
 class Venda(models.Model):
 
@@ -55,7 +56,7 @@ class Venda(models.Model):
     email = models.EmailField(max_length=100, blank=True, null=True)
     mes = models.CharField(max_length=4, choices=Mes)
     ano = models.CharField(max_length=4, blank=True)
-    vendendor = models.CharField(max_length=150, blank=True)
+    vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE, related_name='venda')
     status_venda = models.CharField(choices=status_vendas, max_length=15, blank=False, null=False, default='env_banc')
     status_pg_vendedor = models.CharField(choices=pagamento_vendedor, max_length=15, blank=False, null=False, default='agr_vd')
     foto_documento = models.FileField(upload_to='documentos/')
