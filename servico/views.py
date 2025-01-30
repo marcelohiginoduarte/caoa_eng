@@ -1,15 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from .forms import CadastrarServicoforms
 from .models import Servico
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 from django.utils.timezone import now
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
-
+@login_required 
 def home(request):
     return render(request, 'index.html')
 
+@login_required
 def dash_servico(request):
 
     Mes = [
@@ -29,7 +32,6 @@ def dash_servico(request):
     
     data_atual = now()
     mes_atual = Mes[data_atual.month -1][1]
-    print(mes_atual)
     ano_atual = data_atual.year
     total_valor_vendido_mes = Servico.objects.filter(
         ano=ano_atual, 
@@ -38,6 +40,7 @@ def dash_servico(request):
     total_valor_vendido = Servico.objects.aggregate(total=Sum('valor_empreendimento'))['total'] or 0
     context = {'total_valor_vendido':total_valor_vendido,
             'total_valor_vendido_mes':total_valor_vendido_mes,
+            
             }
     return render(request, 'home.html', context)
 
@@ -74,3 +77,25 @@ class DeletarServico(DeleteView):
     model = Servico
     template_name = 'servico__confirm_delete.html'
     success_url = reverse_lazy('todos_servicos')
+
+
+def detalhes_servico_json(request, id):
+    ver_detalhe_servico = get_object_or_404(Servico, id=id)
+
+    data = {
+        'cliente': ver_detalhe_servico.cliente,
+        'telefone': ver_detalhe_servico.telefone,
+        'tipo_serviço': ver_detalhe_servico.tipo_serviço,
+        'status': ver_detalhe_servico.status,
+        'valor_empreendimento': ver_detalhe_servico.valor_empreendimento,
+        'valor_custos': ver_detalhe_servico.valor_custos,
+        'valor_lucro': ver_detalhe_servico.valor_lucro,
+        'email': ver_detalhe_servico.email,
+        'mes': ver_detalhe_servico.mes,
+        'ano': ver_detalhe_servico.ano,
+        'foto_documento': ver_detalhe_servico.foto_documento.url if ver_detalhe_servico.foto_documento else None,
+        'comoprovante_endereco': ver_detalhe_servico.comoprovante_endereco.url if ver_detalhe_servico.comoprovante_endereco else None,
+        'comoprovante_renda': ver_detalhe_servico.comoprovante_renda.url if ver_detalhe_servico.comoprovante_renda else None,
+    }
+
+    return JsonResponse(data)

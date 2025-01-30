@@ -20,15 +20,6 @@
     </form>
 </div>
 
-{% if is_admin %}
-    <div class="alert alert-info">
-        <strong>Admin:</strong> Você está visualizando todas as vendas.
-    </div>
-{% else %}
-    <div class="alert alert-warning">
-        Exibindo vendas atribuídas ao vendedor {{ user_name }}.
-    </div>
-{% endif %}
 
 <div class="pagination-container">
     <nav aria-label="Paginação">
@@ -83,12 +74,11 @@
             <tr>
                 <th scope="col">Cliente</th>
                 <th scope="col">Serviço</th>
-                <th scope="col">Telefone</th>
                 <th scope="col">Consumo</th>
-                <th scope="col">VL Empreendimento</th>
+                <th scope="col">VL Total</th>
                 <th scope="col">Comissão</th>
                 <th scope="col">Status Venda</th>
-                <th scope="col">Sts Pagamento VD</th>
+                <th scope="col">Pagamento VD</th>
                 <th scope="col">Editar</th>
                 <th scope="col">Remover</th>
             </tr>
@@ -100,10 +90,9 @@
                     <a href="{% url 'detalhes_venda' venda.id %}" class="open-details" data-id="{{ venda.id }}">{{ venda.cliente }}</a>
                 </td>
                 <td>{{ venda.servico }}</td>
-                <td>{{ venda.telefone }}</td>
                 <td>KWH {{ venda.consumo }}</td>
-                <td>R${{ venda.formatar_valor }}</td>
-                <td>R${{ venda.formatar_comissao }}</td>
+                <td>{{ venda.formatar_valor }}</td>
+                <td>{{ venda.formatar_comissao }}</td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_venda }}</a></td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_pg_vendedor }}</a></td>
                 <td><a href="{% url 'atualizarvendas' pk=venda.id %}">Editar</a></td>
@@ -152,8 +141,8 @@
                         <strong>Vendedor:</strong> ${data.vendendor} <br>
                         <strong>Mes:</strong> ${data.mes} <br>
                         <strong>Ano:</strong> ${data.ano} <br>
-                        <strong>Valor Empreendimento:</strong> R$ ${data.valor} <br>
-                        <strong>Valor Comissão:</strong> R$ ${data.comissao} <br>
+                        <strong>Valor Empreendimento:</strong> ${data.valor} <br>
+                        <strong>Valor Comissão:</strong> ${data.comissao} <br>
                         <strong>Status Venda:</strong> ${data.status_venda} <br>
                         <strong>Status Pagamento:</strong> ${data.status_pagamento} <br>
                         <strong>Documento Cliente:</strong>  

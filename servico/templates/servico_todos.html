@@ -2,7 +2,7 @@
 {% load custom_filters %}
 
 {% block material %}
-    <h2>Ver Todos Serviços</h2>
+    <h3>Ver Todos Serviços</h3>
     
     <table class="table table-striped">
         <thead>
@@ -26,13 +26,13 @@
         </thead>
         {% for sv in todo_servico %}
             <tr>
-                <td><a href="#">{{sv.cliente}}</a></td>
+                <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
                 <td>{{sv.telefone}}</td>
                 <td>{{sv.tipo_serviço}}</td>
                 <td>{{ sv.status}}</td>
-                <td>R${{ sv.valor_empreendimento|formatar_valor}}</td>
-                <td>R${{sv.valor_custos|formatar_valor}}</td>
-                <td>R${{ sv.valor_lucro|formatar_valor}}</td>
+                <td>{{ sv.valor_empreendimento|formatar_valor}}</td>
+                <td>{{sv.valor_custos|formatar_valor}}</td>
+                <td>{{ sv.valor_lucro|formatar_valor}}</td>
                 <td>{{ sv.email}}</td>
                 <td>{{ sv.mes}}</td>
                 <td>{{ sv.ano}}</td>
@@ -44,4 +44,64 @@
             </tr>
         {% endfor %}
     </table>
+
+<div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Detalhes do Serviço {{cliente}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="detailsContent">Carregando...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.querySelectorAll('.open-details').forEach(link => {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();
+        const servicoId = this.dataset.id;
+
+        fetch(`/servico/servico/${servicoId}/detalhes`)
+            .then(response => response.json())
+            .then(data => {
+
+                const detalhes = `
+                    <strong>Cliente:</strong> ${data.cliente} <br>
+                    <strong>Telefone:</strong> ${data.telefone} <br>
+                    <strong>Tipo de Serviço:</strong> ${data.tipo_servico} <br>
+                    <strong>Status:</strong> ${data.status} <br>
+                    <strong>Valor Empreendimento:</strong> R$ ${data.valor_empreendimento} <br>
+                    <strong>Valor Custos:</strong> R$ ${data.valor_custos} <br>
+                    <strong>Valor Lucro:</strong> R$ ${data.valor_lucro ?? 'Não informado'} <br>
+                    <strong>Email:</strong> ${data.email} <br>
+                    <strong>Mês:</strong> ${data.mes} <br>
+                    <strong>Ano:</strong> ${data.ano} <br>
+                    <strong>Foto Documento:</strong>  
+                    ${data.foto_documento ? `<a href="${data.foto_documento}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
+                    <strong>Comprovante Endereço:</strong>  
+                    ${data.comoprovante_endereco ? `<a href="${data.comoprovante_endereco}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
+                    <strong>Comprovante Renda:</strong>  
+                    ${data.comoprovante_renda ? `<a href="${data.comoprovante_renda}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
+                `;
+                document.getElementById('detailsContent').innerHTML = detalhes;
+
+                const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Erro ao buscar os detalhes:', error);
+                document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
+            });
+    });
+});
+</script>
 {% endblock %}
