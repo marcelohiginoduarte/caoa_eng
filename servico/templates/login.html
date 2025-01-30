@@ -1,14 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt=br">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+
+    <!--CSS-->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/media.css' %}">
+
+    <!--JS & jQuery-->
+    <script type="text/javascript" src="{% static 'js/script_login.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Entrar</button>
-    </form>
+    <div id="container">
+        <div class="banner">
+            <img src="{% static 'img/Caoa.jpeg' %}" alt="imagem-login">
+            <p style="color: #fff; font-weight: 400;">
+                Seja bem vindo.
+                <br>somos uma equipe de profissionais empenhados em
+                <br>trazer o melhor conteúdo direcionado a você.
+            </p>
+        </div>
+
+        <div class="box-login">
+            <h1>
+                Olá!<br>
+                Seja bem vindo a Caoa Eng.
+            </h1>
+
+            <div class="box">
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p style="color: red;">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </form>
+
+                
+            </div>
+        </div>
+    </div>
 </body>
 </html>

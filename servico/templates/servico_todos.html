@@ -2,8 +2,30 @@
 {% load custom_filters %}
 
 {% block material %}
+
+<style>
+    table {
+    width: 100%;
+    font-size: 13px;
+    border-collapse: collapse;
+    overflow-x: auto;
+    display: block;
+}
+
+th, td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    padding: 8px; 
+}
+
+th {
+    min-width: 120px;
+}
+</style>
+
     <h3>Ver Todos Serviços</h3>
-    
+    <br>
     <table class="table table-striped">
         <thead>
             <tr>

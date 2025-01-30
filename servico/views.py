@@ -7,6 +7,9 @@ from django.views.generic import DeleteView
 from django.utils.timezone import now
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+
 
 @login_required 
 def home(request):
@@ -99,3 +102,23 @@ def detalhes_servico_json(request, id):
     }
 
     return JsonResponse(data)
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("login.html")
+        else:
+            messages.error(request, "Usuário ou senha incorretos")
+
+    return render(request, "login.html")
+
+
+def logout(request):
+    logout(request)
+    return redirect("login")
