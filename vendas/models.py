@@ -32,18 +32,18 @@ class Venda(models.Model):
     ]
 
     Mes = [
-        ('Jan', 'Jan'),
-        ('Fev', 'Fev'),
-        ('Mar', 'Mar'),
-        ('Abr', 'Abr'),
-        ('Mai', 'Mai'),
-        ('Jun', 'Jun'),
-        ('Jul', 'Jul'),
-        ('Ago', 'Ago'),
-        ('Set', 'Set'),
-        ('Out', 'Out'),
-        ('Nov', 'Nov'),
-        ('Dez', 'Dez'),
+        ('Janeiro', 'Jan'),
+        ('Fevereiro', 'Feb'),
+        ('Marco', 'Mar'),
+        ('Abril', 'Apr'),
+        ('maio', 'May'),
+        ('Junho', 'Jun'),
+        ('Julho', 'Jul'),
+        ('Agosto', 'Aug'),
+        ('Setembro', 'Sep'),
+        ('Outubro', 'Oct'),
+        ('Novembro', 'Nov'),
+        ('Dezembro', 'Dec'),
     ]
 
 
@@ -52,10 +52,10 @@ class Venda(models.Model):
     telefone = models.CharField(max_length=15, blank=False, null=False)
     cidade = models.CharField(max_length=150, blank=True, null=True)
     consumo = models.CharField(max_length=30, blank=True, null=True)
-    valor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    valor = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     comissao = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
-    mes = models.CharField(max_length=4, choices=Mes)
+    mes = models.CharField(max_length=10, choices=Mes)
     ano = models.CharField(max_length=4, blank=True)
     vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE, related_name='venda')
     status_venda = models.CharField(choices=status_vendas, max_length=15, blank=False, null=False, default='env_banc')
@@ -71,26 +71,41 @@ class Venda(models.Model):
         if self.pk:
             venda_antiga = Venda.objects.get(pk=self.pk)
             if venda_antiga.status_venda != self.status_venda and self.status_venda == 'aprov_banc':
+                if self.valor is not None:
+                    valor_decimal = Decimal(self.valor)
+                    valor_custos = valor_decimal * Decimal('0.7')
+                    valor_lucro = valor_decimal * Decimal('0.3')
+                else:
+                    valor_custos = valor_lucro = Decimal('0.00')
+
                 Servico.objects.create(
                     cliente=self.cliente,
                     telefone=self.telefone,
                     tipo_serviço=self.servico,
+                    cidade=self.cidade,
                     status='V',
                     valor_empreendimento=self.valor,
-                    valor_custos=Decimal(self.valor) * Decimal('0.7'),  
-                    valor_lucro=Decimal(self.valor) * Decimal('0.3'),                   
+                    valor_custos=valor_custos,
+                    valor_lucro=valor_lucro,                   
                     email=self.email,
                     mes=self.mes,
                     ano=self.ano,
                     foto_documento=self.foto_documento,
                     comoprovante_endereco=self.foto_endereco,
                     comoprovante_renda=self.foto_contracheque,
+                    vendedor=self.vendedor
                 )
 
-        if self.valor:
-            self.comissao = calcular_comissao(self.valor)
-
+        if self.valor and self.vendedor:
+            valor_comissao = self.vendedor.comissao_venda
+            if valor_comissao:
+                try:
+                    valor_decimal = Decimal(valor_comissao)
+                    self.comissao = Decimal(self.valor) * valor_decimal / Decimal('100')
+                except (ValueError, TypeError):
+                    self.comissao = Decimal('0.00')
         super().save(*args, **kwargs)
+
 
     def clean(self):
         validar_telefone(self.telefone)

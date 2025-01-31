@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+{% block subtitulo%} <h3> Relatorio de Serviços</h3>{% endblock %}
+{% load custom_filters %}
+
+{% block material %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>Vendedor</th>
+                <th>Janeiro</th>
+                <th>Fevereiro</th>
+                <th>Março</th>
+                <th>Abril</th>
+                <th>Maio</th>
+                <th>Junho</th>
+                <th>Julho</th>
+                <th>Agosto</th>
+                <th>Setembro</th>
+                <th>Outubro</th>
+                <th>Novembro</th>
+                <th>Dezembro</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vendedor, meses in vendedores.items %}
+                <tr>
+                    <td>{{ vendedor }}</td>
+                    <td>{{ meses.Janeiro|formatar_valor }}</td>
+                    <td>{{ meses.Fevereiro|formatar_valor }}</td>
+                    <td>{{ meses.Março|formatar_valor }}</td>
+                    <td>{{ meses.Abril|formatar_valor }}</td>
+                    <td>{{ meses.Maio|formatar_valor }}</td>
+                    <td>{{ meses.Junho|formatar_valor }}</td>
+                    <td>{{ meses.Julho|formatar_valor }}</td>
+                    <td>{{ meses.Agosto|formatar_valor }}</td>
+                    <td>{{ meses.Setembro|formatar_valor }}</td>
+                    <td>{{ meses.Outubro|formatar_valor }}</td>
+                    <td>{{ meses.Novembro|formatar_valor }}</td>
+                    <td>{{ meses.Dezembro|formatar_valor }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

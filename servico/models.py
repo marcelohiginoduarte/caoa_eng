@@ -1,5 +1,6 @@
 from django.db import models
 from .validators import validar_telefone
+from lista_vendedores.models import ListaVendedores
 
 class Servico(models.Model):
 
@@ -21,18 +22,18 @@ class Servico(models.Model):
     ]
 
     Mes = [
-    ('January', 'Jan'),
-    ('February', 'Feb'),
-    ('March', 'Mar'),
-    ('April', 'Apr'),
-    ('May', 'May'),
-    ('June', 'Jun'),
-    ('July', 'Jul'),
-    ('August', 'Aug'),
-    ('September', 'Sep'),
-    ('October', 'Oct'),
-    ('November', 'Nov'),
-    ('December', 'Dec'),
+    ('Janeiro', 'Jan'),
+    ('Fevereiro', 'Feb'),
+    ('Marco', 'Mar'),
+    ('Abril', 'Apr'),
+    ('maio', 'May'),
+    ('Junho', 'Jun'),
+    ('Julho', 'Jul'),
+    ('Agosto', 'Aug'),
+    ('Setembro', 'Sep'),
+    ('Outubro', 'Oct'),
+    ('Novembro', 'Nov'),
+    ('Dezembro', 'Dec'),
     ]
 
     cliente = models.CharField(max_length=150, null=False, blank=False)
@@ -49,7 +50,7 @@ class Servico(models.Model):
     foto_documento = models.FileField(upload_to='documentos/')
     comoprovante_endereco = models.FileField(upload_to='documentos/')
     comoprovante_renda = models.FileField(upload_to='documentos/')
-
+    vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE)
 
 
     def clean(self):

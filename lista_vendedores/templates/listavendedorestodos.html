@@ -1,9 +1,9 @@
 {% extends 'index.html' %}
 {% load custom_filters %}
+{% block subtitulo%} <h3> Lista de Vendedores</h3>{% endblock %}
 
 
 {% block material %}
-    <h2>Lista de Vendedores</h2>
     
     <table class="table table-striped">
         <thead>
@@ -13,6 +13,7 @@
                 <th scope="col">pix</th>
                 <th scope="col">comissao</th>
                 <th scope="col">total Vendido</th>
+                <th scope="col">total Recebido</th>
                 <th scope="col">Editar</th>
                 <th scope="col">Remover</th>
             </tr>
@@ -23,7 +24,8 @@
                 <td>{{vendedor.Telefone}}</td>
                 <td>{{vendedor.pix}}</td>
                 <td>{{vendedor.comissao_venda}}%</td>
-                <td>R$ {{total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor}}</td>
+                <td>{{total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor}}</td>
+                <td>{{total_comissao|get_venda:vendedor.nome|formatar_valor}}</td>
                 <td><a href="#">Editar</a></td>
                 <td><a href="#">Remover</a></td>
             </tr>

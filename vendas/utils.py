@@ -1,11 +1,15 @@
 from decimal import Decimal
 import locale
+from lista_vendedores.models import ListaVendedores
 
 
 def calcular_comissao(valor):
-    if valor:
-        return Decimal(valor) * Decimal('0.05')
-    return Decimal('0.00')
+    try:
+        valor_comissao = vendedor.comissao_venda
+        valor_decimal = Decimal(valor_comissao) if valor_comissao else Decimal('0.00')
+        return valor_decimal * Decimal('0.05')  # Calcula a comissão com base no valor
+    except (ValueError, TypeError):
+        return Decimal('0.00')
 
 
 def formatar_valor_comissao(valor):
