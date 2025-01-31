@@ -9,6 +9,7 @@ class CadastrarServicoforms(forms.ModelForm):
             'telefone',
             'tipo_serviço',
             'status',
+            'cidade',
             'valor_empreendimento',
             'valor_custos',
             'valor_lucro',

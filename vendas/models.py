@@ -50,6 +50,7 @@ class Venda(models.Model):
     cliente = models.CharField(max_length=150, blank=False, null=False)
     servico = models.CharField(choices=tipo_servico, max_length=15, blank=False, null=False)
     telefone = models.CharField(max_length=15, blank=False, null=False)
+    cidade = models.CharField(max_length=150, blank=True, null=True)
     consumo = models.CharField(max_length=30, blank=True, null=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     comissao = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

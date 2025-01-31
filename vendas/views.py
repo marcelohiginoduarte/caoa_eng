@@ -80,6 +80,7 @@ def detalhe_vendas(request, id):
         "cliente": venda_detalhe.cliente,
         "servico": venda_detalhe.servico,
         "telefone": venda_detalhe.telefone,
+        "cidade": venda_detalhe.cidade,
         "consumo": venda_detalhe.consumo,
         "email": venda_detalhe.email,
         "vendedor": venda_detalhe.vendedor.id if venda_detalhe.vendedor else None, 

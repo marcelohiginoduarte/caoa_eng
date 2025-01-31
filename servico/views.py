@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 
 @login_required 
@@ -60,8 +61,23 @@ def cadastrar_servico(request):
     return render(request, 'servico_cadastrar.html', {'form': form})
 
 def todos_servicos(request):
-    todo_servico = Servico.objects.all()
-    return render(request, 'servico_todos.html', {'todo_servico': todo_servico})
+    query = request.GET.get('q')
+    mes = request.GET.get('mes', '')
+    ano = request.GET.get('ano', '')
+    todo_servico = Servico.objects.all().order_by('id')
+    if query:
+        todo_servico = todo_servico.filter(cliente__icontains=query)
+    if mes:
+        todo_servico = todo_servico.filter(mes=mes)
+    if ano:
+        todo_servico = todo_servico.filter(ano=ano)
+        
+    paginator = Paginator(todo_servico, 15)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'servico_todos.html', {'page_obj': page_obj, 'query': query, 'mes': mes, 'ano': ano})
 
 
 def editar_servico(request, servico_id):

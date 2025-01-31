@@ -10,6 +10,7 @@ class VendasExternasForms(forms.ModelForm):
                     'servico', 
                     'telefone', 
                     'email', 
+                    'cidade',
                     'vendedor', 
                     'valor',
                     'consumo',

@@ -1,4 +1,5 @@
 {% extends 'index.html' %}
+{% block subtitulo%} <h3>Todos Serviços</h3>{% endblock %}
 {% load custom_filters %}
 
 {% block material %}
@@ -24,7 +25,44 @@ th {
 }
 </style>
 
-    <h3>Ver Todos Serviços</h3>
+<form method="GET" action="{% url 'todos_servicos' %}">
+    <input type="text" name="q" placeholder="Buscar cliente..." value="{{ query }}">
+    
+    <select name="mes">
+        <option value="">Todos os meses</option>
+        <option value="1" {% if mes == "1" %}selected{% endif %}>Janeiro</option>
+        <option value="2" {% if mes == "2" %}selected{% endif %}>Fevereiro</option>
+        <option value="3" {% if mes == "3" %}selected{% endif %}>Março</option>
+        <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
+        <option value="5" {% if mes == "5" %}selected{% endif %}>Maio</option>
+        <option value="6" {% if mes == "6" %}selected{% endif %}>Junho</option>
+        <option value="7" {% if mes == "7" %}selected{% endif %}>Julho</option>
+        <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
+        <option value="9" {% if mes == "9" %}selected{% endif %}>Setembro</option>
+        <option value="10" {% if mes == "10" %}selected{% endif %}>Outubro</option>
+        <option value="11" {% if mes == "11" %}selected{% endif %}>Novembro</option>
+        <option value="12" {% if mes == "12" %}selected{% endif %}>Dezembro</option>
+    </select>
+
+    <input type="number" name="ano" placeholder="Ano" value="{{ ano }}" min="2000" max="2100">
+    
+    <button type="submit">Filtrar</button>
+</form>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page=1">Primeira</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+
+    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+    {% endif %}
+</div>
+
     <br>
     <table class="table table-striped">
         <thead>
@@ -33,6 +71,7 @@ th {
                 <th scope="col">telefone</th>
                 <th scope="col">tipo_serviço</th>
                 <th scope="col">status</th>
+                <th scope="col">cidade</th>
                 <th scope="col">valor empreendimento</th>
                 <th scope="col">Valor custos</th>
                 <th scope="col">Valor lucro</th>
@@ -46,12 +85,13 @@ th {
                 <th scope="col">Remover</th>
             </tr>
         </thead>
-        {% for sv in todo_servico %}
+        {% for sv in page_obj %}
             <tr>
                 <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
                 <td>{{sv.telefone}}</td>
                 <td>{{sv.tipo_serviço}}</td>
-                <td>{{ sv.status}}</td>
+                <td>{{ sv.get_status_display}}</td>
+                <td>{{ sv.cidade}}</td>
                 <td>{{ sv.valor_empreendimento|formatar_valor}}</td>
                 <td>{{sv.valor_custos|formatar_valor}}</td>
                 <td>{{ sv.valor_lucro|formatar_valor}}</td>

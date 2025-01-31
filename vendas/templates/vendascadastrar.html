@@ -1,8 +1,8 @@
 {% extends 'index.html' %}
+{% block subtitulo%} <h3> Cadastrar Vendas</h3>{% endblock %}
 
 
 {% block material %}
-    <h2>Cadastrar Vendas {{user_name}}</h2>
     <br>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
