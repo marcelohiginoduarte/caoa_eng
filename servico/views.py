@@ -19,32 +19,41 @@ def home(request):
 @login_required
 def dash_servico(request):
 
-    Mes = [
-        ('January', 'Jan'),
-        ('February', 'Feb'),
-        ('March', 'Mar'),
-        ('April', 'Apr'),
-        ('May', 'May'),
-        ('June', 'Jun'),
-        ('July', 'Jul'),
-        ('August', 'Aug'),
-        ('September', 'Sep'),
-        ('October', 'Oct'),
-        ('November', 'Nov'),
-        ('December', 'Dec'),
-    ]
+    mes = [
+    ('Janeiro', 'Jan'),
+    ('Fevereiro', 'Fev'),
+    ('Março', 'Mar'),
+    ('Abril', 'Abr'),
+    ('Maio', 'Mai'),
+    ('Junho', 'Jun'),
+    ('Julho', 'Jul'),
+    ('Agosto', 'Ago'),
+    ('Setembro', 'Set'),
+    ('Outubro', 'Out'),
+    ('Novembro', 'Nov'),
+    ('Dezembro', 'Dez'),
+]
     
     data_atual = now()
-    mes_atual = Mes[data_atual.month -1][1]
-    ano_atual = data_atual.year
+    mes_atual = mes[data_atual.month -1][0]
+    ano_atual = str(data_atual.year)
+
+    print(f"Filtrando por Ano: {ano_atual}, Mês: {mes_atual}")
     total_valor_vendido_mes = Servico.objects.filter(
         ano=ano_atual, 
-        mes=mes_atual,
+        mes__iexact=mes_atual,
     ).aggregate(total=Sum('valor_empreendimento'))['total'] or 0
+    print(total_valor_vendido_mes)
+
     total_valor_vendido = Servico.objects.aggregate(total=Sum('valor_empreendimento'))['total'] or 0
-    context = {'total_valor_vendido':total_valor_vendido,
-            'total_valor_vendido_mes':total_valor_vendido_mes,
-            
+
+    contar_servicos_mes = Servico.objects.filter(ano=ano_atual, mes__iexact=mes_atual).count()
+    contar_servicos_todos = Servico.objects.count()
+
+    context = {'total_valor_vendido': total_valor_vendido,
+            'total_valor_vendido_mes': total_valor_vendido_mes,
+            'contar_servicos_mes': contar_servicos_mes,
+            'contar_servicos_todos': contar_servicos_todos,
             }
     return render(request, 'home.html', context)
 
@@ -61,23 +70,48 @@ def cadastrar_servico(request):
     return render(request, 'servico_cadastrar.html', {'form': form})
 
 def todos_servicos(request):
+
     query = request.GET.get('q')
-    mes = request.GET.get('mes', '')
+    mes_numero  = request.GET.get('mes', '') #precisei fazer isso, por que a pesquisa estava sendo por numero.
     ano = request.GET.get('ano', '')
+
+    meses = [
+        ('Janeiro', 'Jan'),
+        ('Fevereiro', 'Fev'),
+        ('Março', 'Mar'),
+        ('Abril', 'Abr'),
+        ('Maio', 'Mai'),
+        ('Junho', 'Jun'),
+        ('Julho', 'Jul'),
+        ('Agosto', 'Ago'),
+        ('Setembro', 'Set'),
+        ('Outubro', 'Out'),
+        ('Novembro', 'Nov'),
+        ('Dezembro', 'Dez'),
+    ]
+
+
+    if mes_numero:
+        mes_nome = meses[int(mes_numero) - 1][0]
+    else:
+        mes_nome = ''
+
     todo_servico = Servico.objects.all().order_by('id')
+
     if query:
         todo_servico = todo_servico.filter(cliente__icontains=query)
-    if mes:
-        todo_servico = todo_servico.filter(mes=mes)
+
+    if mes_nome:
+        todo_servico = todo_servico.filter(mes=mes_nome)
+
     if ano:
         todo_servico = todo_servico.filter(ano=ano)
-        
-    paginator = Paginator(todo_servico, 15)
 
+    paginator = Paginator(todo_servico, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'servico_todos.html', {'page_obj': page_obj, 'query': query, 'mes': mes, 'ano': ano})
+    return render(request, 'servico_todos.html', {'page_obj': page_obj, 'query': query, 'mes': mes_nome, 'ano': ano})
 
 
 def editar_servico(request, servico_id):

@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from datetime import datetime
 from servico.models import Servico
 from vendas.models import Venda
 from lista_vendedores.models import ListaVendedores
 
 
-def gerar_relatorio(request):
+def gerar_relatorio_vendas_por_mes(request):
     relatorio = (Servico.objects
                  .values('mes', 'tipo_serviço', 'vendedor__nome')
                  .annotate(
@@ -17,18 +17,33 @@ def gerar_relatorio(request):
                  .order_by('vendedor__nome', 'mes'))
 
     vendedores = {}
+    totais_mes = {
+        'Janeiro': 0, 'Fevereiro': 0, 'Março': 0, 'Abril': 0, 'Maio': 0,
+        'Junho': 0, 'Julho': 0, 'Agosto': 0, 'Setembro': 0, 'Outubro': 0,
+        'Novembro': 0, 'Dezembro': 0
+    }
+
     for item in relatorio:
         vendedor_nome = item['vendedor__nome']
         mes = item['mes']
+        valor_empreendimento = item['total_valor_empreendimento'] or 0
+
+        
         if vendedor_nome not in vendedores:
             vendedores[vendedor_nome] = {
                 'Janeiro': 0, 'Fevereiro': 0, 'Março': 0, 'Abril': 0, 'Maio': 0,
                 'Junho': 0, 'Julho': 0, 'Agosto': 0, 'Setembro': 0, 'Outubro': 0,
                 'Novembro': 0, 'Dezembro': 0
             }
-        vendedores[vendedor_nome][mes] = item['total_valor_empreendimento']
+        vendedores[vendedor_nome][mes] = valor_empreendimento
 
-    return render(request, 'relatorios_servicos.html', {'vendedores': vendedores})
+        
+        totais_mes[mes] += valor_empreendimento
+
+    return render(request, 'relatorios_servicos.html', {
+        'vendedores': vendedores,
+        'totais_mes': totais_mes
+    })
 
 
 def gerar_relatorio_tipo_servico(request):

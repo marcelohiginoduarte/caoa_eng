@@ -31,20 +31,20 @@ class Venda(models.Model):
         
     ]
 
-    Mes = [
-        ('Janeiro', 'Jan'),
-        ('Fevereiro', 'Feb'),
-        ('Marco', 'Mar'),
-        ('Abril', 'Apr'),
-        ('maio', 'May'),
-        ('Junho', 'Jun'),
-        ('Julho', 'Jul'),
-        ('Agosto', 'Aug'),
-        ('Setembro', 'Sep'),
-        ('Outubro', 'Oct'),
-        ('Novembro', 'Nov'),
-        ('Dezembro', 'Dec'),
-    ]
+    mes = [
+    ('Janeiro', 'Jan'),
+    ('Fevereiro', 'Fev'),
+    ('Março', 'Mar'),
+    ('Abril', 'Abr'),
+    ('Maio', 'Mai'),
+    ('Junho', 'Jun'),
+    ('Julho', 'Jul'),
+    ('Agosto', 'Ago'),
+    ('Setembro', 'Set'),
+    ('Outubro', 'Out'),
+    ('Novembro', 'Nov'),
+    ('Dezembro', 'Dez'),
+]
 
 
     cliente = models.CharField(max_length=150, blank=False, null=False)
@@ -55,7 +55,7 @@ class Venda(models.Model):
     valor = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     comissao = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
-    mes = models.CharField(max_length=10, choices=Mes)
+    mes = models.CharField(max_length=10, choices=mes)
     ano = models.CharField(max_length=4, blank=True)
     vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE, related_name='venda')
     status_venda = models.CharField(choices=status_vendas, max_length=15, blank=False, null=False, default='env_banc')

@@ -21,20 +21,20 @@ class Servico(models.Model):
         ('P' ,'Pendente'),
     ]
 
-    Mes = [
+    mes = [
     ('Janeiro', 'Jan'),
-    ('Fevereiro', 'Feb'),
-    ('Marco', 'Mar'),
-    ('Abril', 'Apr'),
-    ('maio', 'May'),
+    ('Fevereiro', 'Fev'),
+    ('Março', 'Mar'),
+    ('Abril', 'Abr'),
+    ('Maio', 'Mai'),
     ('Junho', 'Jun'),
     ('Julho', 'Jul'),
-    ('Agosto', 'Aug'),
-    ('Setembro', 'Sep'),
-    ('Outubro', 'Oct'),
+    ('Agosto', 'Ago'),
+    ('Setembro', 'Set'),
+    ('Outubro', 'Out'),
     ('Novembro', 'Nov'),
-    ('Dezembro', 'Dec'),
-    ]
+    ('Dezembro', 'Dez'),
+]
 
     cliente = models.CharField(max_length=150, null=False, blank=False)
     telefone = models.CharField(max_length=15, null=False, blank=False)
@@ -45,7 +45,7 @@ class Servico(models.Model):
     valor_custos = models.DecimalField(max_digits=10, decimal_places=2)
     valor_lucro = models.DecimalField(max_digits=10, decimal_places=2)
     email = models.EmailField(blank=False, null=False)
-    mes = models.CharField(max_length=10, choices=Mes)
+    mes = models.CharField(max_length=10, choices=mes)
     ano = models.CharField(max_length=4, blank=True)
     foto_documento = models.FileField(upload_to='documentos/')
     comoprovante_endereco = models.FileField(upload_to='documentos/')

@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% block subtitulo%} <h3> Relatorio de Serviços</h3>{% endblock %}
+{% block subtitulo%} <h3> Relatorio de Vendas</h3>{% endblock %}
 {% load custom_filters %}
 
 {% block material %}
@@ -29,6 +29,8 @@
 <body>
 
     <br>
+    <Samp>Este relatorio apresenta o valor vendido por mes de cada vendedor.</Samp>
+    <br>
     <table>
         <thead>
             <tr>
@@ -49,23 +51,39 @@
         </thead>
         <tbody>
             {% for vendedor, meses in vendedores.items %}
-                <tr>
-                    <td>{{ vendedor }}</td>
-                    <td>{{ meses.Janeiro|formatar_valor }}</td>
-                    <td>{{ meses.Fevereiro|formatar_valor }}</td>
-                    <td>{{ meses.Março|formatar_valor }}</td>
-                    <td>{{ meses.Abril|formatar_valor }}</td>
-                    <td>{{ meses.Maio|formatar_valor }}</td>
-                    <td>{{ meses.Junho|formatar_valor }}</td>
-                    <td>{{ meses.Julho|formatar_valor }}</td>
-                    <td>{{ meses.Agosto|formatar_valor }}</td>
-                    <td>{{ meses.Setembro|formatar_valor }}</td>
-                    <td>{{ meses.Outubro|formatar_valor }}</td>
-                    <td>{{ meses.Novembro|formatar_valor }}</td>
-                    <td>{{ meses.Dezembro|formatar_valor }}</td>
-                </tr>
+            <tr>
+                <td>{{ vendedor }}</td>
+                <td>{{ meses.Janeiro|formatar_valor }}</td>
+                <td>{{ meses.Fevereiro|formatar_valor }}</td>
+                <td>{{ meses.Março|formatar_valor }}</td>
+                <td>{{ meses.Abril|formatar_valor }}</td>
+                <td>{{ meses.Maio|formatar_valor }}</td>
+                <td>{{ meses.Junho|formatar_valor }}</td>
+                <td>{{ meses.Julho|formatar_valor }}</td>
+                <td>{{ meses.Agosto|formatar_valor }}</td>
+                <td>{{ meses.Setembro|formatar_valor }}</td>
+                <td>{{ meses.Outubro|formatar_valor }}</td>
+                <td>{{ meses.Novembro|formatar_valor }}</td>
+                <td>{{ meses.Dezembro|formatar_valor }}</td>
+            </tr>
             {% endfor %}
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>{{ totais_mes.Janeiro|formatar_valor }}</td>
+                <td>{{ totais_mes.Fevereiro|formatar_valor }}</td>
+                <td>{{ totais_mes.Março|formatar_valor }}</td>
+                <td>{{ totais_mes.Abril|formatar_valor }}</td>
+                <td>{{ totais_mes.Maio|formatar_valor }}</td>
+                <td>{{ totais_mes.Junho|formatar_valor }}</td>
+                <td>{{ totais_mes.Julho|formatar_valor }}</td>
+                <td>{{ totais_mes.Agosto|formatar_valor }}</td>
+                <td>{{ totais_mes.Setembro|formatar_valor }}</td>
+                <td>{{ totais_mes.Outubro|formatar_valor }}</td>
+                <td>{{ totais_mes.Novembro|formatar_valor }}</td>
+                <td>{{ totais_mes.Dezembro|formatar_valor }}</td>
+            </tr>
         </tbody>
     </table>
+    
 
 {% endblock %}
