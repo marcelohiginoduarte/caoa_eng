@@ -27,14 +27,15 @@
     </style>
 </head>
 <body>
-
-    <h5>Este relatorio apresenta o valor vendido por mes de cada vendedor</h5>
+    <form method="get" action="{% url 'gerar_relatorio' %}">
+        <button type="submit" name="export" value="true">Exportar para Excel</button>
+    </form>
     <br>
-    <Samp>Este relatorio apresenta o valor vendido por mes de cada vendedor</Samp>
+    <Samp>Este relatorio apresenta o valor por tipo de Serviços de cada mes.</Samp>
     <table>
         <thead>
             <tr>
-                <th>Vendedor</th>
+                <th>Tipo Serviços</th>
                 <th>Janeiro</th>
                 <th>Fevereiro</th>
                 <th>Março</th>
@@ -50,9 +51,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for vendedor, meses in vendedores.items %}
+            {% for tipo, meses in tipo_servico.items %}
                 <tr>
-                    <td>{{ vendedor }}</td>
+                    <td>{{ tipo }}</td>
                     <td>{{ meses.Janeiro|formatar_valor }}</td>
                     <td>{{ meses.Fevereiro|formatar_valor }}</td>
                     <td>{{ meses.Março|formatar_valor }}</td>
