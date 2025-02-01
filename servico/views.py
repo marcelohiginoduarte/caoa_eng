@@ -14,7 +14,10 @@ from django.core.paginator import Paginator
 
 @login_required 
 def home(request):
-    return render(request, 'index.html')
+    return redirect('login')
+
+def entrada_principal(request):
+    return render(request, 'servico_entrada.html')
 
 @login_required
 def dash_servico(request):
@@ -162,7 +165,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("login.html")
+            return redirect("entrada_do_sistema")
         else:
             messages.error(request, "Usuário ou senha incorretos")
 

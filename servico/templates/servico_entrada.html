@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+
+{% block material %}
+<style>
+  /* Container centralizado */
+  .center-container {
+    text-align: center;
+    margin-top: 100px; /* Ajuste conforme necessário */
+  }
+
+  /* Estilo para o H2 com efeito de digitação */
+  h2 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    white-space: nowrap;      /* Impede quebra de linha */
+    overflow: hidden;         /* Oculta o texto que ainda não foi digitado */
+    border-right: .15em solid #fff; /* Cursor piscante */
+    display: inline-block;    /* Para que o width seja aplicado corretamente */
+  }
+
+  /* Efeito de digitação via CSS */
+  .typing {
+    animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+  }
+
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #fff; }
+  }
+
+  /* Estilo para a data */
+  p.date {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+  }
+</style>
+
+<div class="center-container">
+  <h2 id="typed-text"></h2>
+  <p class="date" id="current-date"></p>
+</div>
+
+<script>
+    const text = "Bem Vindo ao sistema da Caoa Engenharia!";
+    const speed = 100;
+    let i = 0;
+
+    function typeWriter() {
+        if (i < text.length) {
+            document.getElementById("typed-text").innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, speed);
+        }
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    window.onload = function() {
+        const h2 = document.getElementById("typed-text");
+        h2.classList.add("typing");
+        typeWriter();
+
+        const currentDate = new Date();
+        document.getElementById("current-date").innerText = formatDate(currentDate);
+    };
+</script>
+{% endblock %}
