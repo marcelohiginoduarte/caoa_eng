@@ -60,6 +60,7 @@ def dash_servico(request):
             }
     return render(request, 'home.html', context)
 
+@login_required 
 def cadastrar_servico(request):
     
     if request.method == 'POST':
@@ -72,6 +73,7 @@ def cadastrar_servico(request):
 
     return render(request, 'servico_cadastrar.html', {'form': form})
 
+@login_required 
 def todos_servicos(request):
 
     query = request.GET.get('q')
@@ -116,7 +118,7 @@ def todos_servicos(request):
 
     return render(request, 'servico_todos.html', {'page_obj': page_obj, 'query': query, 'mes': mes_nome, 'ano': ano})
 
-
+@login_required 
 def editar_servico(request, servico_id):
     servico = get_object_or_404(Servico, id=servico_id)
     if request.method == 'POST':

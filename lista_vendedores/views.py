@@ -3,8 +3,9 @@ from django.db.models import Sum
 from .forms import CriarVendedorForms
 from .models import ListaVendedores
 from vendas.models import Venda
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def ver_todos_vendedores(request):
     ver_vendedores = ListaVendedores.objects.all()
 
@@ -21,6 +22,8 @@ def ver_todos_vendedores(request):
 
     return render(request, 'listavendedorestodos.html', {'ver_vendedores': ver_vendedores, 'total_vendas_por_vendedor':total_vendas_por_vendedor, 'total_comissao':total_comissao})
 
+
+@login_required
 def criar_vendedor(request):
     
     if request.method == 'POST':

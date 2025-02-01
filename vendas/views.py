@@ -7,7 +7,9 @@ from django.views.generic import DeleteView, UpdateView
 from django.core.paginator import Paginator
 from lista_vendedores.models import ListaVendedores
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
+@login_required 
 def CadastrarVenda(request):
     if request.method == 'POST':
         form = VendasExternasForms(request.POST, request.FILES)
@@ -19,7 +21,7 @@ def CadastrarVenda(request):
     
     return render(request, 'vendascadastrar.html', {'form': form})
 
-
+@login_required 
 def vendas_vendedor_logado(request):
     query = request.GET.get('q', '')  
     if request.user.is_superuser:
@@ -48,7 +50,7 @@ def vendas_vendedor_logado(request):
         }
     )
 
-
+@login_required 
 def status_vendas(request, venda_id):
     venda = Venda.objects.get(id=venda_id)
     cliente = venda.cliente

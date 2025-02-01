@@ -5,8 +5,9 @@ from servico.models import Servico
 from vendas.models import Venda
 from lista_vendedores.models import ListaVendedores
 from .utilits import export_to_excel
+from django.contrib.auth.decorators import login_required
 
-
+@login_required 
 def gerar_relatorio_vendas_por_mes(request):
     relatorio = (Servico.objects
                  .values('mes', 'tipo_serviço', 'vendedor__nome')
@@ -60,6 +61,7 @@ def gerar_relatorio_vendas_por_mes(request):
     })
 
 
+@login_required 
 def gerar_relatorio_tipo_servico(request):
     relatorio = (Servico.objects
                  .values('mes', 'tipo_serviço')
