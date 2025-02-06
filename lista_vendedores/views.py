@@ -3,10 +3,17 @@ from django.db.models import Sum
 from .forms import CriarVendedorForms
 from .models import ListaVendedores
 from vendas.models import Venda
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+
+
+def is_direcao(user):
+    return user.groups.filter(name='direcao').exists()
 
 @login_required
 def ver_todos_vendedores(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
     ver_vendedores = ListaVendedores.objects.all()
 
     total_vendas_por_vendedor = {}
@@ -25,7 +32,8 @@ def ver_todos_vendedores(request):
 
 @login_required
 def criar_vendedor(request):
-    
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
     if request.method == 'POST':
         form = CriarVendedorForms(request.POST, request.FILES)
         if form.is_valid():

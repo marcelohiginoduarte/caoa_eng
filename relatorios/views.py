@@ -5,10 +5,15 @@ from servico.models import Servico
 from vendas.models import Venda
 from lista_vendedores.models import ListaVendedores
 from .utilits import export_to_excel
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+def is_direcao(user):
+    return user.groups.filter(name='direcao').exists()
 
 @login_required 
 def gerar_relatorio_vendas_por_mes(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
     relatorio = (Servico.objects
                  .values('mes', 'tipo_serviço', 'vendedor__nome')
                  .annotate(
@@ -63,6 +68,8 @@ def gerar_relatorio_vendas_por_mes(request):
 
 @login_required 
 def gerar_relatorio_tipo_servico(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
     relatorio = (Servico.objects
                  .values('mes', 'tipo_serviço')
                  .annotate(
@@ -90,6 +97,8 @@ def gerar_relatorio_tipo_servico(request):
 
 
 def gerar_relatorio(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
     headers = ['Vendedor', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio',
                 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
     

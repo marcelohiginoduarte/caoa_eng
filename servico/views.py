@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 from django.utils.timezone import now
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -16,11 +16,17 @@ from django.core.paginator import Paginator
 def home(request):
     return redirect('login')
 
+@login_required
 def entrada_principal(request):
     return render(request, 'servico_entrada.html')
 
+def is_direcao(user):
+    return user.groups.filter(name='direcao').exists()
+
 @login_required
 def dash_servico(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
 
     mes = [
     ('Janeiro', 'Jan'),
@@ -62,7 +68,8 @@ def dash_servico(request):
 
 @login_required 
 def cadastrar_servico(request):
-    
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html') 
     if request.method == 'POST':
         form = CadastrarServicoforms(request.POST, request.FILES)
         if form.is_valid():
@@ -75,6 +82,8 @@ def cadastrar_servico(request):
 
 @login_required 
 def todos_servicos(request):
+    if not request.user.groups.filter(name='direcao').exists():
+            return render(request, 'sem_acesso.html')
 
     query = request.GET.get('q')
     mes_numero  = request.GET.get('mes', '') #precisei fazer isso, por que a pesquisa estava sendo por numero.
