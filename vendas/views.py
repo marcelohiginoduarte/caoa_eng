@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from .models import Venda
@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from lista_vendedores.models import ListaVendedores
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 
 @login_required 
 def CadastrarVenda(request):
@@ -24,10 +25,14 @@ def CadastrarVenda(request):
 @login_required 
 def vendas_vendedor_logado(request):
     query = request.GET.get('q', '')  
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.groups.filter(name='direcao').exists():
         vendas = Venda.objects.all()  
     else:
-        vendedor = get_object_or_404(ListaVendedores, nome=request.user.username)
+        try:
+            vendedor = ListaVendedores.objects.get(nome=request.user.username)
+        except ListaVendedores.DoesNotExist:
+            return render(request, 'erro_vendedor.html', {'message': 'Vendedor não encontrado!'})
+
         vendas = Venda.objects.filter(vendedor=vendedor)
 
     if query:
@@ -35,7 +40,7 @@ def vendas_vendedor_logado(request):
             Q(cliente__icontains=query) | Q(servico__icontains=query)
         )
 
-    paginator = Paginator(vendas, 10) 
+    paginator = Paginator(vendas, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -58,21 +63,26 @@ def status_vendas(request, venda_id):
     consumo = venda.consumo
     valor = venda.valor
 
+    
+    if not request.user.groups.filter(name='direcao').exists():
+        return HttpResponseForbidden("Você não tem permissão para alterar o status da venda.")
 
     status_venda = get_object_or_404(Venda, id=venda_id)
     if request.method == 'POST':
         form = Alterar_status_vendas(request.POST, instance=status_venda)
         if form.is_valid():
             form.save()
-            return redirect ('vendasporvendedor')
+            return redirect('vendasporvendedor')
     else:
         form = Alterar_status_vendas(instance=status_venda)
-    return render(request, 'status_vendas.html', {'form': form,
-                                                    'cliente': cliente,
-                                                    'servico': servico,
-                                                    'consumo': consumo,
-                                                    'valor': valor
-                                                    })
+    
+    return render(request, 'status_vendas.html', {
+        'form': form,
+        'cliente': cliente,
+        'servico': servico,
+        'consumo': consumo,
+        'valor': valor
+    })
 
 
 def detalhe_vendas(request, id):

@@ -57,7 +57,7 @@ class Venda(models.Model):
     email = models.EmailField(max_length=100, blank=True, null=True)
     mes = models.CharField(max_length=10, choices=mes)
     ano = models.CharField(max_length=4, blank=True)
-    vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE, related_name='venda')
+    vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE, related_name='venda', nome=request.user.username)
     status_venda = models.CharField(choices=status_vendas, max_length=15, blank=False, null=False, default='env_banc')
     status_pg_vendedor = models.CharField(choices=pagamento_vendedor, max_length=15, blank=False, null=False, default='agr_vd')
     foto_documento = models.FileField(upload_to='documentos/')
