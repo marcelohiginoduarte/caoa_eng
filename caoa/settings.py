@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
-from decouple import config
+from decouple import config,Csv
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,8 +15,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+APPS_DIR = BASE_DIR / 'apps'
+
+sys.path.insert(0, str(APPS_DIR)) 
 
 # Application definition
 
@@ -26,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'servico',
+    'apps.servico',
     'vendas',
     'lista_vendedores',
     'relatorios',
