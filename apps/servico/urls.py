@@ -9,5 +9,5 @@ urlpatterns = [
     path('servicoeditar/<int:servico_id>', views.editar_servico, name='editar_servico'),
     path('servico/<int:id>/detalhes', views.detalhes_servico_json, name='detalhe_servico'),
     path('servico/delete/<int:pk>', views.DeletarServico.as_view(), name='deletarservico'),
-    
+    path('servico/logouut', views.logout, name='logout'),
 ]
