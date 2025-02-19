@@ -3,8 +3,8 @@ name: Deploy Django
 on:
   push:
     branches:
-      - main 
-
+      - main
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,9 +16,12 @@ jobs:
       - name: Configurar SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 195.200.7.16 >> ~/.ssh/known_hosts
+
+      - name: Testar conexão SSH
+        run: ssh -o StrictHostKeyChecking=no root@195.200.7.16 "echo 'Conexão SSH funcionando!'"
 
       - name: Deploy via SSH
         run: |
@@ -27,5 +30,6 @@ jobs:
             git pull origin main &&
             systemctl restart gunicorn
           "
+
 
 
