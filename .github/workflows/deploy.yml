@@ -1,9 +1,9 @@
-name: Deploy caoa
+name: Deploy Django
 
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
   deploy:
@@ -11,24 +11,21 @@ jobs:
 
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 195.200.7.16 >> ~/.ssh/known_hosts  # Substitua pelo IP real ou domínio
+          ssh-keyscan 195.200.7.16 >> ~/.ssh/known_hosts
 
-      - name: Fazer deploy
+      - name: Deploy via SSH
         run: |
           ssh root@195.200.7.16 "
             cd /caminho/do/seu/projeto &&
             git pull origin main &&
-            source /caminho/do/projeto/venv/bin/activate &&  # Ajuste para o caminho correto
-            pip install -r requirements.txt &&
-            python manage.py migrate &&
-            python manage.py collectstatic --noinput &&
-            systemctl restart gunicorn  # Ou outro serviço
+            systemctl restart gunicorn
           "
+
 
