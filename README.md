@@ -3,3 +3,4 @@
 
  - Incluir as fucionalidades.
  - Serviços
+ - Contar vendas
