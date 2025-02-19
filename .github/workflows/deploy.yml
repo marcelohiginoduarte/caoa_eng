@@ -26,7 +26,7 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh root@195.200.7.16 "
-            cd /caoa_eng &&
+            cd ~/caoa_eng &&
             git pull origin main &&
             systemctl restart gunicorn
           "
