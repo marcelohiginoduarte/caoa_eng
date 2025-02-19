@@ -27,7 +27,7 @@ def is_direcao(user):
 def dash_servico(request):
     if not request.user.groups.filter(name='direcao').exists():
             return render(request, 'sem_acesso.html')
-
+            #vendas
     mes = [
     ('Janeiro', 'Jan'),
     ('Fevereiro', 'Fev'),
