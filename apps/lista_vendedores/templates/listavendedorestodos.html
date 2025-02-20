@@ -2,33 +2,35 @@
 {% load custom_filters %}
 {% block subtitulo%} <h3> Lista de Vendedores</h3>{% endblock %}
 
-
 {% block material %}
-    
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Nome</th>
-                <th scope="col">telefone</th>
-                <th scope="col">pix</th>
-                <th scope="col">comissao</th>
-                <th scope="col">total Vendido</th>
-                <th scope="col">total Recebido</th>
-                <th scope="col">Editar</th>
-                <th scope="col">Remover</th>
-            </tr>
-        </thead>
-        {% for vendedor in ver_vendedores %}
-            <tr>
-                <td><a href="#">{{vendedor.nome}}</a></td>
-                <td>{{vendedor.Telefone}}</td>
-                <td>{{vendedor.pix}}</td>
-                <td>{{vendedor.comissao_venda}}%</td>
-                <td>{{total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor}}</td>
-                <td>{{total_comissao|get_venda:vendedor.nome|formatar_valor}}</td>
-                <td><a href="#">Editar</a></td>
-                <td><a href="#">Remover</a></td>
-            </tr>
-        {% endfor %}
-    </table>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Pix</th>
+                    <th scope="col">Comissão</th>
+                    <th scope="col">Total Vendido</th>
+                    <th scope="col">Total Recebido</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendedor in ver_vendedores %}
+                    <tr>
+                        <td><a href="#">{{ vendedor.nome }}</a></td>
+                        <td>{{ vendedor.Telefone }}</td>
+                        <td>{{ vendedor.pix }}</td>
+                        <td>{{ vendedor.comissao_venda }}%</td>
+                        <td>{{ total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor }}</td>
+                        <td>{{ total_comissao|get_venda:vendedor.nome|formatar_valor }}</td>
+                        <td><a href="#">Editar</a></td>
+                        <td><a href="#">Remover</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
