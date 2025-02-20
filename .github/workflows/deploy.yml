@@ -25,10 +25,10 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh root@195.200.7.16 "
+          ssh root@195.200.7.16 << 'EOF'
             cd ~/caoa_eng &&
-            git pull origin main &&
-          "
+            git pull origin main
+          EOF
 
 
 
