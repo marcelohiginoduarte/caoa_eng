@@ -5,126 +5,102 @@
 {% block material %}
 
 <style>
-    table {
-    width: 100%;
-    font-size: 13px;
-    border-collapse: collapse;
-    overflow-x: auto;
-    display: block;
-}
-
-th, td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; 
-    padding: 8px; 
-}
-
-th {
-    min-width: 120px;
-}
+    th, td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        padding: 8px;
+    }
+    th {
+        min-width: 120px;
+    }
 </style>
 
-<form method="GET" action="{% url 'todos_servicos' %}">
-    <input type="text" name="q" placeholder="Buscar cliente..." value="{{ query }}">
-    
-    <select name="mes">
-        <option value="">Todos os meses</option>
-        <option value="1" {% if mes == "1" %}selected{% endif %}>Janeiro</option>
-        <option value="2" {% if mes == "2" %}selected{% endif %}>Fevereiro</option>
-        <option value="3" {% if mes == "3" %}selected{% endif %}>Março</option>
-        <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
-        <option value="5" {% if mes == "5" %}selected{% endif %}>Maio</option>
-        <option value="6" {% if mes == "6" %}selected{% endif %}>Junho</option>
-        <option value="7" {% if mes == "7" %}selected{% endif %}>Julho</option>
-        <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
-        <option value="9" {% if mes == "9" %}selected{% endif %}>Setembro</option>
-        <option value="10" {% if mes == "10" %}selected{% endif %}>Outubro</option>
-        <option value="11" {% if mes == "11" %}selected{% endif %}>Novembro</option>
-        <option value="12" {% if mes == "12" %}selected{% endif %}>Dezembro</option>
-    </select>
-
-    <input type="number" name="ano" placeholder="Ano" value="{{ ano }}" min="2000" max="2100">
-    
-    <button type="submit">Filtrar</button>
-</form>
-
-<div>
-    {% if page_obj.has_previous %}
-        <a href="?page=1">Primeira</a>
-        <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-    {% endif %}
-
-    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
-    {% endif %}
-</div>
-
-    <br>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">cliente</th>
-                <th scope="col">telefone</th>
-                <th scope="col">tipo_serviço</th>
-                <th scope="col">status</th>
-                <th scope="col">cidade</th>
-                <th scope="col">valor empreendimento</th>
-                <th scope="col">Valor custos</th>
-                <th scope="col">Valor lucro</th>
-                <th scope="col">Email</th>
-                <th scope="col">Mês</th>
-                <th scope="col">Ano</th>
-                <th scope="col">foto_documento</th>
-                <th scope="col">comoprovante endereco</th>
-                <th scope="col">comoprovante renda</th>
-                <th scope="col">Editar</th>
-                <th scope="col">Remover</th>
-            </tr>
-        </thead>
-        {% for sv in page_obj %}
-            <tr>
-                <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
-                <td>{{sv.telefone}}</td>
-                <td>{{sv.tipo_serviço}}</td>
-                <td>{{ sv.get_status_display}}</td>
-                <td>{{ sv.cidade}}</td>
-                <td>{{ sv.valor_empreendimento|formatar_valor}}</td>
-                <td>{{sv.valor_custos|formatar_valor}}</td>
-                <td>{{ sv.valor_lucro|formatar_valor}}</td>
-                <td>{{ sv.email}}</td>
-                <td>{{ sv.mes}}</td>
-                <td>{{ sv.ano}}</td>
-                <td><a href="{{sv.foto_documento.url}}">Baixa DOC</a></td>
-                <td><a href="{{ sv.comoprovante_endereco.url}}">Baixar</a></td>
-                <td><a href="{{ sv.comoprovante_renda.url}}">Baixar</a></td>
-                <td><a href="{% url 'editar_servico' sv.id %}">Editar</a></td>
-                <td><a href="{% url 'deletarservico' pk=sv.id %}">Remover</a></td>
-            </tr>
-        {% endfor %}
-    </table>
-
-<div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Detalhes do Serviço {{cliente}}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="detailsContent">Carregando...</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
+<div class="container">
+    <form method="GET" action="{% url 'todos_servicos' %}" class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Buscar cliente..." value="{{ query }}">
         </div>
+        
+        <div class="col-md-3">
+            <select name="mes" class="form-select">
+                <option value="">Todos os meses</option>
+                {% for i in "123456789101112" %}
+                <option value="{{ i }}" {% if mes == i %}selected{% endif %}>{{ i|date:"F" }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <input type="number" name="ano" class="form-control" placeholder="Ano" value="{{ ano }}" min="2000" max="2100">
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="mt-3 d-flex justify-content-between">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-sm btn-outline-primary">Primeira</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">Próxima</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-primary">Última</a>
+        {% endif %}
+    </div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Telefone</th>
+                    <th>Tipo Serviço</th>
+                    <th>Status</th>
+                    <th>Cidade</th>
+                    <th>Valor Empreendimento</th>
+                    <th>Valor Custos</th>
+                    <th>Valor Lucro</th>
+                    <th>Email</th>
+                    <th>Mês</th>
+                    <th>Ano</th>
+                    <th>Foto Documento</th>
+                    <th>Comp. Endereço</th>
+                    <th>Comp. Renda</th>
+                    <th>Editar</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sv in page_obj %}
+                    <tr>
+                        <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
+                        <td>{{sv.telefone}}</td>
+                        <td>{{sv.tipo_serviço}}</td>
+                        <td>{{ sv.get_status_display }}</td>
+                        <td>{{ sv.cidade }}</td>
+                        <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
+                        <td>{{ sv.valor_custos|formatar_valor }}</td>
+                        <td>{{ sv.valor_lucro|formatar_valor }}</td>
+                        <td>{{ sv.email }}</td>
+                        <td>{{ sv.mes }}</td>
+                        <td>{{ sv.ano }}</td>
+                        <td><a href="{{ sv.foto_documento.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                        <td><a href="{{ sv.comoprovante_endereco.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                        <td><a href="{{ sv.comoprovante_renda.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                        <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning">Editar</a></td>
+                        <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger">Remover</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-
-
 
 <script>
 document.querySelectorAll('.open-details').forEach(link => {
@@ -135,7 +111,6 @@ document.querySelectorAll('.open-details').forEach(link => {
         fetch(`/servico/servico/${servicoId}/detalhes`)
             .then(response => response.json())
             .then(data => {
-
                 const detalhes = `
                     <strong>Cliente:</strong> ${data.cliente} <br>
                     <strong>Telefone:</strong> ${data.telefone} <br>
@@ -166,4 +141,5 @@ document.querySelectorAll('.open-details').forEach(link => {
     });
 });
 </script>
+
 {% endblock %}
