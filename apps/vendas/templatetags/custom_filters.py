@@ -22,16 +22,15 @@ def formatar_valor(valor):
 
 @register.filter
 def calcular_comissao(valor, vendedor_id):
-    def calcular_comissao(valor, vendedor_id):
-        try:
-            vendedor = ListaVendedores.objects.get(id=vendedor_id)
+    try:
+        vendedor = ListaVendedores.objects.get(id=vendedor_id)
 
-            
-            valor_decimal = Decimal(valor) * Decimal(vendedor.comissao_venda) / Decimal('100')
+        
+        valor_decimal = Decimal(valor) * Decimal(vendedor.comissao_venda) / Decimal('100')
 
-            return f"R$ {valor_decimal:,.2f}".replace(",", "_").replace(".", ",").replace("_", ".")
-        except (ListaVendedores.DoesNotExist, ValueError, TypeError):
-            return "R$ 0,00"
+        return f"R$ {valor_decimal:,.2f}".replace(",", "_").replace(".", ",").replace("_", ".")
+    except (ListaVendedores.DoesNotExist, ValueError, TypeError):
+        return "R$ 0,00"
 
 @register.filter
 def formatar_valor_comissao(valor):
