@@ -93,7 +93,7 @@
                 <td>{{ venda.servico }}</td>
                 <td>KWH {{ venda.consumo }}</td>
                 <td>{{ venda.valor |formatar_valor }}</td>
-                <td>{{ venda.comissao |calcular_comissao:venda.vendedor.id }}</td>
+                <td>{{ venda.valor | calcular_comissao:venda.vendedor.id }}</td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_venda }}</a></td>
                 <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_pg_vendedor }}</a></td>
                 <td><a href="{% url 'atualizarvendas' pk=venda.id %}">Editar</a></td>
