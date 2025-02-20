@@ -1,12 +1,12 @@
 {% extends 'index.html' %}
 {% load custom_filters %}
 
-{% block subtitulo%} <h3> Todas Vendas</h3>{% endblock %}
+{% block subtitulo %} <h3 class="text-center"> Todas Vendas</h3>{% endblock %}
 
 {% block material %}
 <div class="container">
-    <form method="GET" action="" class="row">
-        <div class="col-md-8 col-lg-6 mb-2">
+    <form method="GET" action="" class="row g-2 align-items-center">
+        <div class="col-12 col-md-8 col-lg-6">
             <input 
                 type="text" 
                 name="q" 
@@ -14,16 +14,15 @@
                 value="{{ query|default:'Digite o nome do cliente' }}" 
                 class="form-control">
         </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <div class="col-12 col-md-auto">
+            <button type="submit" class="btn btn-primary w-100">Pesquisar</button>
         </div>
     </form>
 </div>
 
-
-<div class="pagination-container">
+<div class="pagination-container my-3">
     <nav aria-label="Paginação">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-center flex-wrap">
             {% if vendas.has_previous %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ vendas.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Anterior">
@@ -31,7 +30,6 @@
                     </a>
                 </li>
             {% endif %}
-            
             {% for num in vendas.paginator.page_range %}
                 {% if vendas.number == num %}
                     <li class="page-item active"><span class="page-link">{{ num }}</span></li>
@@ -41,7 +39,6 @@
                     </li>
                 {% endif %}
             {% endfor %}
-            
             {% if vendas.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ vendas.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Próximo">
@@ -53,35 +50,19 @@
     </nav>
 </div>
 
-
-    <br>
-    <style>
-        table {
-            table-layout: fixed;
-            width: 100%;
-            font-size: 13px
-        }
-
-        td, th {
-            white-space: nowrap;
-            overflow: visible;
-            text-overflow: unset;
-    }
-    </style>
-
-<div >
-    <table class="table table-striped">
-        <thead>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered text-center align-middle">
+        <thead class="table-dark">
             <tr>
-                <th scope="col">Cliente</th>
-                <th scope="col">Serviço</th>
-                <th scope="col">Consumo</th>
-                <th scope="col">VL Total</th>
-                <th scope="col">Comissão</th>
-                <th scope="col">Status Venda</th>
-                <th scope="col">Pagamento VD</th>
-                <th scope="col">Editar</th>
-                <th scope="col">Remover</th>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Consumo</th>
+                <th>VL Total</th>
+                <th>Comissão</th>
+                <th>Status Venda</th>
+                <th>Pagamento VD</th>
+                <th>Editar</th>
+                <th>Remover</th>
             </tr>
         </thead>
         <tbody>
@@ -94,22 +75,21 @@
                 <td>KWH {{ venda.consumo }}</td>
                 <td>{{ venda.valor |formatar_valor }}</td>
                 <td>{{ venda.valor | calcular_comissao:venda.vendedor.id }}</td>
-                <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_venda }}</a></td>
-                <td><a href=" {% url 'alterar_status_venda' venda.id %} ">{{ venda.status_pg_vendedor }}</a></td>
-                <td><a href="{% url 'atualizarvendas' pk=venda.id %}">Editar</a></td>
-                <td><a href="{% url 'deletarvenda' pk=venda.id %}">Remover</a></td>
+                <td><a href="{% url 'alterar_status_venda' venda.id %}">{{ venda.status_venda }}</a></td>
+                <td><a href="{% url 'alterar_status_venda' venda.id %}">{{ venda.status_pg_vendedor }}</a></td>
+                <td><a href="{% url 'atualizarvendas' pk=venda.id %}" class="btn btn-warning btn-sm">Editar</a></td>
+                <td><a href="{% url 'deletarvenda' pk=venda.id %}" class="btn btn-danger btn-sm">Remover</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
-
 <div id="detailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Detalhes do Cliente {{cliente}}</h5>
+                <h5 class="modal-title" id="detailsModalLabel">Detalhes da Venda</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -127,13 +107,10 @@
         link.addEventListener('click', function(event) {
             event.preventDefault();
             const vendaId = this.dataset.id;
-
-            
             fetch(`/vendas/vendas/${vendaId}/detalhes/`)
                 .then(response => response.json())
                 .then(data => {
-                    
-                    const detalhes = `
+                    document.getElementById('detailsContent').innerHTML = `
                         <strong>Cliente:</strong> ${data.cliente} <br>
                         <strong>Serviço:</strong> ${data.servico} <br>
                         <strong>Telefone:</strong> ${data.telefone} <br>
@@ -153,17 +130,14 @@
                         <strong>Comprovante de Renda:</strong>  
                         ${data.foto_contracheque ? `<a href="${data.foto_contracheque}" target="_blank">Ver Comprovante</a>` : 'Não enviado'} <br>
                     `;
-                    document.getElementById('detailsContent').innerHTML = detalhes;
-
-                    
                     const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
                     modal.show();
                 })
                 .catch(error => {
                     console.error('Erro ao buscar os detalhes:', error);
                     document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
-            });
+                });
+        });
     });
-});
 </script>
 {% endblock %}
