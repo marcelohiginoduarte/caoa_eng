@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+
+
+{% block material %}
+
+    <h2>Tem certeza que deseja excluir esta venda?</h2>
+
+    <ul>
+        <samp><strong>Cliente:</strong> {{ object.cliente }}</samp><br>
+        <samp><strong>Produto:</strong> {{ object.servico }}</samp><br>
+        <samp><strong>Quantidade:</strong> {{ object.valor }}</samp>
+    </ul>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-info" type="submit">Confirmar Exclusão</button>
+        <a href="{% url 'vendasporvendedor' %}">Cancelar</a>  
+    </form>
+{% endblock %}

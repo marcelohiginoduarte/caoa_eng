@@ -66,6 +66,22 @@
                 </div>
             </li>
             <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDesepesas"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Operacional</span>
+                </a>
+                <div id="collapseDesepesas" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Operacional:</h6>
+                        <a class="collapse-item" href="{% url 'entrada_do_sistema' %}"></a>
+                        <a class="collapse-item" href="{% url 'criardespesaprojeto' %}">Cadastrar Compras</a>
+                        <a class="collapse-item" href="{% url 'criardespesaprojetotodas' %}">Ver compras projeto</a>
+                        <a class="collapse-item" href="{% url 'todos_servicos' %}">Gerar Relatorio</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapserelatorios"
                     aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
