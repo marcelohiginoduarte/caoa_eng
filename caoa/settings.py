@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'vendas',
     'lista_vendedores',
     'relatorios',
+    'acompanhamentosfinanceiroprojeto',
 ]
 
 MIDDLEWARE = [

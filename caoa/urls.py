@@ -13,6 +13,7 @@ urlpatterns = [
     path('vendas/', include('vendas.urls')),
     path('vendedor', include('lista_vendedores.urls')),
     path('relatorios/', include('relatorios.urls')),
+    path('despesas/', include('acompanhamentosfinanceiroprojeto.urls')),
     path("login/", login_view, name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 ]

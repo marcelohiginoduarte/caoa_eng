@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+{% block subtitulo%} <h3> Criar Despesa projeto</h3>{% endblock %}
+
+{% block material %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Cadastrar</button>
+    </form>
+{% endblock %}
