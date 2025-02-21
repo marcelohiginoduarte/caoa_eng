@@ -22,8 +22,10 @@ def criar_despesa_projeto(request):
 
     return render(request, 'criar_despesa_projeto.html', {'form': form})
 
-
+@login_required
 def ver_despesas_projeto(request):
+    if not request.user.groups.filter(name='direcao').exists():
+        return request(request, 'sem_acesso.html')
     projeto_filtro = request.GET.get('projeto', '') 
     projetos = Servico.objects.all()  
     custos = AcompanhamentoDespesasProjeto.objects.all()  
