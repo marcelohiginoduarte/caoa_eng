@@ -95,7 +95,7 @@ def detalhe_vendas(request, id):
         "cidade": venda_detalhe.cidade,
         "consumo": venda_detalhe.consumo,
         "email": venda_detalhe.email,
-        "vendedor": venda_detalhe.vendedor.id if venda_detalhe.vendedor else None, 
+        "vendedor": venda_detalhe.vendedor.nome if venda_detalhe.vendedor else None, 
         "mes": venda_detalhe.mes,
         "ano": venda_detalhe.ano,
         "valor": venda_detalhe.formatar_valor() if hasattr(venda_detalhe, 'formatar_valor') else venda_detalhe.valor,
