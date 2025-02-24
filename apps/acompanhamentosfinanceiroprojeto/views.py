@@ -6,6 +6,13 @@ from django.db.models import Sum
 from servico.models import Servico
 from django.views.generic import DeleteView, UpdateView
 from django.urls import reverse_lazy
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+
 
 
 @login_required
@@ -74,3 +81,49 @@ class DeletarCustos(DeleteView):
     model = AcompanhamentoDespesasProjeto
     template_name = 'custos__confirm_delete.html'
     success_url = reverse_lazy('criardespesaprojetotodas')
+
+
+def gerar_relatorio(request):
+    projeto_filtro = request.GET.get('projeto', None)
+    
+    if projeto_filtro:
+        custos = AcompanhamentoDespesasProjeto.objects.filter(projeto__cliente=projeto_filtro)
+    else:
+        custos = AcompanhamentoDespesasProjeto.objects.all()
+    
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+
+    data = [['Projeto', 'Descrição', 'Valor', 'Data Compra', 'Observação']]
+    
+    for custo in custos:
+        data.append([
+            custo.projeto.cliente, 
+            custo.descricao, 
+            f'{custo.valor:,.2f}',
+            custo.data_compra.strftime('%d/%m/%Y'),  
+            custo.observacao or '-'
+        ])
+
+    table = Table(data)
+
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('ALIGN', (1, 1), (-1, -1), 'LEFT'),
+    ])
+    table.setStyle(style)
+
+    doc.build([table])
+
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_custos.pdf"'
+    return response
