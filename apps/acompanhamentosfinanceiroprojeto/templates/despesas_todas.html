@@ -25,6 +25,10 @@
         </div>
     </div>
 </form>
+<form action="{% url 'gerar_relatorio' %}" method="get">
+    <input type="hidden" name="projeto" value="{{ projeto_filtro }}">
+    <button type="submit" class="btn btn-success">Gerar Relatório PDF</button>
+</form>
 
 {% if projeto_filtro %}
     <div class="mt-3">
