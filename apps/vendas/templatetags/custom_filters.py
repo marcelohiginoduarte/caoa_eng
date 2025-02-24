@@ -39,3 +39,11 @@ def formatar_valor_comissao(valor):
         return locale.currency(valor, grouping=True) if valor else 'R$ 0,00'
     except locale.Error:
         return f'R$ {valor:.2f}'
+    
+
+@register.filter
+def soma_valores(dicionario, vendedores, atributo):
+    total = 0
+    for vendedor in vendedores:
+        total += dicionario.get(vendedor.nome, 0)
+    return total
