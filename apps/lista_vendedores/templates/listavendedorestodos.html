@@ -1,36 +1,59 @@
 {% extends 'index.html' %}
 {% load custom_filters %}
-{% block subtitulo%} <h3> Lista de Vendedores</h3>{% endblock %}
+{% load soma_tags %}
+
+{% block subtitulo %}
+  <h3>Lista de Vendedores</h3>
+{% endblock %}
 
 {% block material %}
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Telefone</th>
-                    <th scope="col">Pix</th>
-                    <th scope="col">Comissão</th>
-                    <th scope="col">Total Vendido</th>
-                    <th scope="col">Total Recebido</th>
-                    <th scope="col">Editar</th>
-                    <th scope="col">Remover</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for vendedor in ver_vendedores %}
-                    <tr>
-                        <td><a href="#">{{ vendedor.nome }}</a></td>
-                        <td>{{ vendedor.Telefone }}</td>
-                        <td>{{ vendedor.pix }}</td>
-                        <td>{{ vendedor.comissao_venda }}%</td>
-                        <td>{{ total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor }}</td>
-                        <td>{{ total_comissao|get_venda:vendedor.nome|formatar_valor }}</td>
-                        <td><a href="#">Editar</a></td>
-                        <td><a href="#">Remover</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Telefone</th>
+          <th scope="col">Pix</th>
+          <th scope="col">Comissão</th>
+          <th scope="col">Total Vendido</th>
+          <th scope="col">Total Recebido</th>
+          <th scope="col">Pend. Pagamento</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Remover</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vendedor in ver_vendedores %}
+          <tr>
+            <td><a href="#">{{ vendedor.nome }}</a></td>
+            <td>{{ vendedor.Telefone }}</td>
+            <td>{{ vendedor.pix }}</td>
+            <td>{{ vendedor.comissao_venda }}%</td>
+            <td>{{ total_vendas_por_vendedor|get_venda:vendedor.nome|formatar_valor }}</td>
+            <td>{{ total_comissao|get_venda:vendedor.nome|formatar_valor }}</td>
+            <td>{{ total_pendente_pg_vendedor|get_venda:vendedor.nome|formatar_valor }}</td>
+            <td><a href="#">Editar</a></td>
+            <td><a href="#">Remover</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4">Totais:</th>
+          {% soma_valores total_vendas_por_vendedor ver_vendedores as total_vendas %}
+          {% soma_valores total_comissao ver_vendedores as total_comissao %}
+          {% soma_valores total_pendente_pg_vendedor ver_vendedores as total_pendente %}
+          
+          <th>{{ total_vendas|formatar_valor }}</th>
+          <th>{{ total_comissao|formatar_valor }}</th>
+          <th>{{ total_pendente|formatar_valor }}</th>
+          <th colspan="2"></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 {% endblock %}
+
+
+
+
