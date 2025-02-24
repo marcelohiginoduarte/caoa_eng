@@ -51,10 +51,16 @@ class Servico(models.Model):
     comoprovante_endereco = models.FileField(upload_to='documentos/')
     comoprovante_renda = models.FileField(upload_to='documentos/')
     vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE)
+    projeto_ativo = models.BooleanField(default=True)
 
 
     def clean(self):
         validar_telefone(self.telefone)
-
+    
+    def save(self, *args, **kwargs):
+        if self.status == 'C':
+            self.projeto_ativo = False
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.cliente
