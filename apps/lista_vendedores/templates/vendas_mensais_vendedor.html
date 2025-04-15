@@ -1,0 +1,83 @@
+{% extends 'index.html' %}
+{% load soma_tags %}
+{% load custom_filters %}
+
+{% block subtitulo %} 
+    <h3 class="text-center">Vendas Mensais e Pagamentos</h3>
+{% endblock %}
+
+{% block material %}
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+
+    <h2>Resumo de Vendas Mensais</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Vendedor</th>
+                {% for mes in meses %}
+                    <th>{{ mes }} (Vendas)</th>
+                    <th>{{ mes }} (Comissão)</th>
+                {% endfor %}
+                <th>Total Vendas</th>
+                <th>Total Comissão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vendedor in ver_vendedores %}
+                <tr>
+                    <td>{{ vendedor.nome }}</td>
+                    {% for mes in meses %}
+                        <td>
+                            {% with vendas=vendas_por_vendedor|get_item:vendedor.nome|get_item:mes %}
+                                {% if vendas %}
+                                    R$ {{ vendas.total_vendas|formatar_valor }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% with vendas=vendas_por_vendedor|get_item:vendedor.nome|get_item:mes %}
+                                {% if vendas %}
+                                    R$ {{ vendas.total_comissao|formatar_valor }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    {% endfor %}
+                    <td>{{ total_vendas_por_vendedor|get_item:vendedor.nome|formatar_valor }}</td>
+                    <td>{{ total_comissao|get_item:vendedor.nome|formatar_valor }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total Geral</th>
+                {% for mes in meses %}
+                    <th>-</th>
+                    <th>-</th>
+                {% endfor %}
+                <th>{{ total_geral_vendas|formatar_valor }}</th>
+                <th>{{ total_geral_comissao|formatar_valor }}</th>
+            </tr>
+        </tfoot>
+    </table>
+
+{% endblock %}

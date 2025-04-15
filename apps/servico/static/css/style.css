@@ -12,18 +12,18 @@
 p {
     cursor: pointer;
     font-weight: 600;
-    color: slateblue;
+    color: rgb(3, 3, 3);
 }
 
 h1 {
     font-size: 1.8em;
-    color: slateblue;
+    color: rgb(19, 19, 20);
     padding: 0px 0px 35px 15px;
 }
 
 h2 {
     font-size: 1.4em;
-    color: slateblue;
+    color: rgb(20, 20, 22);
 }
 
 input {
@@ -69,7 +69,7 @@ body {
         border-radius: 10px;
         -webkit-box-shadow: 0px 0px 6px -1px #000000; 
         box-shadow: 0px 0px 6px -1px #000000;
-        background: #785eef;
+        background: #141314;
 
         display: flex;
         align-items: center;
@@ -80,7 +80,7 @@ body {
             height: 520px;
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
-            background: #785eef;
+            background: #201f22;
 
             display: none;
             flex-direction: column;
@@ -141,8 +141,8 @@ body {
         right: 15px;
         bottom: 15px;
         border-radius: 50%;
-        border: 1px solid #483D8B;
-        background: slateblue;
+        border: 1px solid #0b0a0c;
+        background: rgb(16, 15, 17);
 
         display: flex;
         justify-content: center;
