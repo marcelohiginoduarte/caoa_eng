@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Count
 
 
 @login_required 
@@ -187,3 +188,24 @@ def login_view(request):
 def logout(request):
     logout(request)
     return redirect("login")
+
+
+
+def grafico_servico(request):
+    servicos_por_mes = (Servico.objects.values('mes').annotate(total=Count('id')).order_by('mes'))
+
+    meses = [
+        "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+        "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+    ]
+    dados = {mes: 0 for mes in meses}
+
+    for servico in servicos_por_mes:
+        dados[servico["mes"]] = servico["total"]
+
+    contexto = {
+        "labels": list(dados.keys()),  # Meses no eixo X
+        "valores": list(dados.values()),  # Quantidade de serviços no eixo Y
+    }
+
+    return render(request, "home.html", contexto)

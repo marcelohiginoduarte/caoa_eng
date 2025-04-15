@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-
+{% load custom_filters %}
 
 
 {% block material %}
@@ -9,7 +9,7 @@
     <ul>
         <samp><strong>Cliente:</strong> {{ object.cliente }}</samp><br>
         <samp><strong>Produto:</strong> {{ object.servico }}</samp><br>
-        <samp><strong>Quantidade:</strong> {{ object.valor }}</samp>
+        <samp><strong>Quantidade:</strong> {{ object.valor | formatar_valor }}</samp>
     </ul>
 
     <form method="post">

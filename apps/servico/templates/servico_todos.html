@@ -53,54 +53,54 @@
             <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-primary">Última</a>
         {% endif %}
     </div>
-
-    <div class="table-responsive mt-3">
-        <table class="table table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Cliente</th>
-                    <th>Telefone</th>
-                    <th>Tipo Serviço</th>
-                    <th>Status</th>
-                    <th>Cidade</th>
-                    <th>Valor Empreendimento</th>
-                    <th>Valor Custos</th>
-                    <th>Valor Lucro</th>
-                    <th>Email</th>
-                    <th>Mês</th>
-                    <th>Ano</th>
-                    <th>Foto Documento</th>
-                    <th>Comp. Endereço</th>
-                    <th>Comp. Renda</th>
-                    <th>Editar</th>
-                    <th>Remover</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sv in page_obj %}
+    
+        <div class="table-responsive mt-3">
+            <table class="table table-striped">
+                <thead class="table-dark">
                     <tr>
-                        <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
-                        <td>{{sv.telefone}}</td>
-                        <td>{{sv.tipo_serviço}}</td>
-                        <td>{{ sv.get_status_display }}</td>
-                        <td>{{ sv.cidade }}</td>
-                        <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
-                        <td>{{ sv.valor_custos|formatar_valor }}</td>
-                        <td>{{ sv.valor_lucro|formatar_valor }}</td>
-                        <td>{{ sv.email }}</td>
-                        <td>{{ sv.mes }}</td>
-                        <td>{{ sv.ano }}</td>
-                        <td><a href="{{ sv.foto_documento.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                        <td><a href="{{ sv.comoprovante_endereco.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                        <td><a href="{{ sv.comoprovante_renda.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                        <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning">Editar</a></td>
-                        <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger">Remover</a></td>
+                        <th>Cliente</th>
+                        <th>Telefone</th>
+                        <th>Tipo Serviço</th>
+                        <th>Status</th>
+                        <th>Cidade</th>
+                        <th>Valor Empreendimento</th>
+                        <th>Valor Custos</th>
+                        <th>Valor Lucro</th>
+                        <th>Email</th>
+                        <th>Mês</th>
+                        <th>Ano</th>
+                        <th>Foto Documento</th>
+                        <th>Comp. Endereço</th>
+                        <th>Comp. Renda</th>
+                        <th>Editar</th>
+                        <th>Remover</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for sv in page_obj %}
+                        <tr>
+                            <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
+                            <td>{{sv.telefone}}</td>
+                            <td>{{sv.tipo_serviço}}</td>
+                            <td>{{ sv.get_status_display }}</td>
+                            <td>{{ sv.cidade }}</td>
+                            <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
+                            <td>{{ sv.valor_custos|formatar_valor }}</td>
+                            <td>{{ sv.valor_lucro|formatar_valor }}</td>
+                            <td>{{ sv.email }}</td>
+                            <td>{{ sv.mes }}</td>
+                            <td>{{ sv.ano }}</td>
+                            <td><a href="{{ sv.foto_documento.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                            <td><a href="{{ sv.comoprovante_endereco.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                            <td><a href="{{ sv.comoprovante_renda.url }}" class="btn btn-sm btn-info">Baixar</a></td>
+                            <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning">Editar</a></td>
+                            <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger">Remover</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 <script>
 document.querySelectorAll('.open-details').forEach(link => {
