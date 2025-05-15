@@ -23,7 +23,7 @@ def criar_despesa_projeto(request):
         form = CriarAcompanhamentoDespesasForms(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('criardespesaprojetotodas')
+            return redirect('criardespesaprojeto')
     else:
         form = CriarAcompanhamentoDespesasForms()
 
