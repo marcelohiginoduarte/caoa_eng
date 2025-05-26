@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% block subtitulo%} <h3>Todos Serviços</h3>{% endblock %}
+{% block subtitulo %} <h3>Todos Serviços</h3> {% endblock %}
 {% load custom_filters %}
 
 {% block material %}
@@ -8,11 +8,41 @@
     th, td {
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; 
+        text-overflow: ellipsis;
         padding: 8px;
     }
+
     th {
         min-width: 120px;
+        position: relative;
+    }
+
+    table.table tbody tr:hover {
+        background-color: #524b4b !important;
+        transition: #524b4b 0.3s ease;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    table.table {
+        position: relative;
+    }
+
+    .table-responsive {
+        position: relative;
+        overflow-x: auto;
+        overflow-y: visible !important;
+        z-index: 0;
+    }
+
+    .dropdown-menu {
+        position: absolute !important;
+        z-index: 2000 !important;
+    }
+    
+    .dropup .dropdown-menu {
+        bottom: 100%;
+        top: auto !important;
     }
 </style>
 
@@ -54,53 +84,60 @@
         {% endif %}
     </div>
     
-        <div class="table-responsive mt-3">
-            <table class="table table-striped">
-                <thead class="table-dark">
+    <div class="table-responsive mt-3">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Telefone</th>
+                    <th>Tipo Serviço</th>
+                    <th>Status</th>
+                    <th>Cidade</th>
+                    <th>Valor Empreendimento</th>
+                    <th>Valor Custos</th>
+                    <th>Valor Lucro</th>
+                    <th>Email</th>
+                    <th>Mês</th>
+                    <th>Ano</th>
+                    <th>Doc. Complementar</th>
+                    <th>Editar</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sv in page_obj %}
                     <tr>
-                        <th>Cliente</th>
-                        <th>Telefone</th>
-                        <th>Tipo Serviço</th>
-                        <th>Status</th>
-                        <th>Cidade</th>
-                        <th>Valor Empreendimento</th>
-                        <th>Valor Custos</th>
-                        <th>Valor Lucro</th>
-                        <th>Email</th>
-                        <th>Mês</th>
-                        <th>Ano</th>
-                        <th>Foto Documento</th>
-                        <th>Comp. Endereço</th>
-                        <th>Comp. Renda</th>
-                        <th>Editar</th>
-                        <th>Remover</th>
+                        <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{ sv.cliente }}</a></td>
+                        <td>{{ sv.telefone }}</td>
+                        <td>{{ sv.tipo_serviço }}</td>
+                        <td>{{ sv.get_status_display }}</td>
+                        <td>{{ sv.cidade }}</td>
+                        <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
+                        <td>{{ sv.valor_custos|formatar_valor }}</td>
+                        <td>{{ sv.valor_lucro|formatar_valor }}</td>
+                        <td>{{ sv.email }}</td>
+                        <td>{{ sv.mes }}</td>
+                        <td>{{ sv.ano }}</td>
+                        <td>
+                            <div class="dropdown {% if forloop.last %}dropup{% endif %}" data-bs-display="static">
+                                <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-file-alt"></i> Documentos
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ sv.foto_documento.url }}" target="_blank">Foto Documento</a></li>
+                                    <li><a class="dropdown-item" href="{{ sv.comoprovante_endereco.url }}" target="_blank">Comp. Endereço</a></li>
+                                    <li><a class="dropdown-item" href="{{ sv.comoprovante_renda.url }}" target="_blank">Comp. Renda</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning">Editar</a></td>
+                        <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger">Remover</a></td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for sv in page_obj %}
-                        <tr>
-                            <td><a href="{% url 'detalhe_servico' sv.id %}" class="open-details" data-id="{{ sv.id }}">{{sv.cliente}}</a></td>
-                            <td>{{sv.telefone}}</td>
-                            <td>{{sv.tipo_serviço}}</td>
-                            <td>{{ sv.get_status_display }}</td>
-                            <td>{{ sv.cidade }}</td>
-                            <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
-                            <td>{{ sv.valor_custos|formatar_valor }}</td>
-                            <td>{{ sv.valor_lucro|formatar_valor }}</td>
-                            <td>{{ sv.email }}</td>
-                            <td>{{ sv.mes }}</td>
-                            <td>{{ sv.ano }}</td>
-                            <td><a href="{{ sv.foto_documento.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                            <td><a href="{{ sv.comoprovante_endereco.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                            <td><a href="{{ sv.comoprovante_renda.url }}" class="btn btn-sm btn-info">Baixar</a></td>
-                            <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning">Editar</a></td>
-                            <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger">Remover</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 
 <script>
 document.querySelectorAll('.open-details').forEach(link => {
@@ -139,6 +176,14 @@ document.querySelectorAll('.open-details').forEach(link => {
                 document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
             });
     });
+});
+
+
+var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+dropdownElementList.map(function (dropdownToggleEl) {
+  return new bootstrap.Dropdown(dropdownToggleEl, {
+    display: 'static'
+  })
 });
 </script>
 
