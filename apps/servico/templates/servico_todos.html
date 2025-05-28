@@ -113,7 +113,12 @@
                         <td>{{ sv.get_status_display }}</td>
                         <td>{{ sv.cidade }}</td>
                         <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
-                        <td>{{ sv.valor_custos|formatar_valor }}</td>
+                        <td>
+                            {{ sv.valor_custos|formatar_valor }}
+                            {% if sv.valor_empreendimento %}
+                                ({{ sv.porcentagem_custos }}%)
+                            {% endif %}
+                        </td>
                         <td>{{ sv.valor_lucro|formatar_valor }}</td>
                         <td>{{ sv.email }}</td>
                         <td>{{ sv.mes }}</td>

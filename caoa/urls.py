@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 from servico.views import login_view
 
 urlpatterns = [
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('', home, name='home_principal'),
     path('servico/', include('servico.urls')),
