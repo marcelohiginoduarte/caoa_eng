@@ -6,7 +6,7 @@ from servico.models import Servico
 
 
 @pytest.mark.django_db
-def test_criar_servico():
+def test_servico_models_criar_servico():
     vendedor = ListaVendedores.objects.create(nome='vendedor para test')
 
     fake_file = SimpleUploadedFile("dummy.txt", b"conteudo")
@@ -35,7 +35,7 @@ def test_criar_servico():
 
 
 @pytest.mark.django_db
-def test_save_desativa_projeto_ativo_quando_status_concluido():
+def test_servico_models_save_desativa_projeto_ativo_quando_status_concluido():
     vendedor = ListaVendedores.objects.create(nome='Vendedor Teste')
 
     fake_file = SimpleUploadedFile("dummy.txt", b"conteudo")
@@ -65,9 +65,9 @@ def test_save_desativa_projeto_ativo_quando_status_concluido():
 
 
 @pytest.mark.django_db
-def test_clean_valida_telefone():
+def test_servico_models_clean_valida_telefone():
     vendedor = ListaVendedores.objects.create(nome='Vendedor Teste')
-    
+
     fake_file = SimpleUploadedFile("dummy.txt", b"conteudo")
 
     servico = Servico(
@@ -92,7 +92,7 @@ def test_clean_valida_telefone():
     with pytest.raises(ValidationError):
         servico.clean()
 
-
-def test_str_retorna_nome_cliente():
+@pytest.mark.django_db
+def test_servico_models_str_retorna_nome_cliente():
     servico = Servico(cliente="Cliente Legal")
     assert str(servico) == "Cliente Legal"

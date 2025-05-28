@@ -4,6 +4,8 @@ from lista_vendedores.models import ListaVendedores
 
 class Servico(models.Model):
 
+    """ Modelo que representa um serviço executado em campo """
+
     tipo_servicos = [
         ('Eng_Solar', 'Energia solar'),
         ('LT', 'Loteamento'),
@@ -36,7 +38,7 @@ class Servico(models.Model):
     ('Dezembro', 'Dez'),
 ]
 
-    cliente = models.CharField(max_length=150, null=False, blank=False)
+    cliente = models.CharField( "Nome do cliente", max_length=150, null=False, blank=False, help_text="cliente que vamos prestar o seviço")
     telefone = models.CharField(max_length=15, null=False, blank=False)
     tipo_serviço = models.CharField(choices=tipo_servicos,max_length=14, default='Eng_Solar')
     status = models.CharField(choices=status_servico, max_length=10, default='V')

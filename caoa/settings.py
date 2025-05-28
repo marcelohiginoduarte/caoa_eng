@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'lista_vendedores',
     'relatorios',
     'acompanhamentosfinanceiroprojeto',
+    'django.contrib.admindocs',
 ]
 
 MIDDLEWARE = [

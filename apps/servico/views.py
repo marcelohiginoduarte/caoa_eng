@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Count
 from .forms import CadastrarServicoforms
+from acompanhamentosfinanceiroprojeto.models import AcompanhamentoDespesasProjeto
 from .models import Servico
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
@@ -28,8 +29,6 @@ def is_direcao(user):
 def dash_servico(request):
     if not request.user.groups.filter(name='direcao').exists():
             return render(request, 'sem_acesso.html')
-            #vendas
-            #vendas
     mes = [
     ('Janeiro', 'Jan'),
     ('Fevereiro', 'Fev'),
@@ -68,6 +67,7 @@ def dash_servico(request):
             }
     return render(request, 'home.html', context)
 
+
 @login_required 
 def cadastrar_servico(request):
     if not request.user.groups.filter(name='direcao').exists():
@@ -85,41 +85,26 @@ def cadastrar_servico(request):
 @login_required 
 def todos_servicos(request):
     if not request.user.groups.filter(name='direcao').exists():
-            return render(request, 'sem_acesso.html')
+        return render(request, 'sem_acesso.html')
 
     query = request.GET.get('q')
-    mes_numero  = request.GET.get('mes', '') #precisei fazer isso, por que a pesquisa estava sendo por numero.
+    mes_numero = request.GET.get('mes', '')
     ano = request.GET.get('ano', '')
 
     meses = [
-        ('Janeiro', 'Jan'),
-        ('Fevereiro', 'Fev'),
-        ('Março', 'Mar'),
-        ('Abril', 'Abr'),
-        ('Maio', 'Mai'),
-        ('Junho', 'Jun'),
-        ('Julho', 'Jul'),
-        ('Agosto', 'Ago'),
-        ('Setembro', 'Set'),
-        ('Outubro', 'Out'),
-        ('Novembro', 'Nov'),
-        ('Dezembro', 'Dez'),
+        ('Janeiro', 'Jan'), ('Fevereiro', 'Fev'), ('Março', 'Mar'), ('Abril', 'Abr'),
+        ('Maio', 'Mai'), ('Junho', 'Jun'), ('Julho', 'Jul'), ('Agosto', 'Ago'),
+        ('Setembro', 'Set'), ('Outubro', 'Out'), ('Novembro', 'Nov'), ('Dezembro', 'Dez'),
     ]
 
-
-    if mes_numero:
-        mes_nome = meses[int(mes_numero) - 1][0]
-    else:
-        mes_nome = ''
+    mes_nome = meses[int(mes_numero) - 1][0] if mes_numero else ''
 
     todo_servico = Servico.objects.all().order_by('id')
 
     if query:
         todo_servico = todo_servico.filter(cliente__icontains=query)
-
     if mes_nome:
         todo_servico = todo_servico.filter(mes=mes_nome)
-
     if ano:
         todo_servico = todo_servico.filter(ano=ano)
 
@@ -127,7 +112,23 @@ def todos_servicos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'servico_todos.html', {'page_obj': page_obj, 'query': query, 'mes': mes_nome, 'ano': ano})
+    for sv in page_obj:
+        total_custos = AcompanhamentoDespesasProjeto.objects.filter(projeto=sv).aggregate(
+            total=Sum('valor')
+        )['total'] or 0
+        sv.valor_custos = total_custos
+
+        if sv.valor_empreendimento:
+            sv.porcentagem_custos = round((total_custos / sv.valor_empreendimento) * 100, 2)
+        else:
+            sv.porcentagem_custos = 0
+
+    return render(request, 'servico_todos.html', {
+        'page_obj': page_obj,
+        'query': query,
+        'mes': mes_nome,
+        'ano': ano
+    })
 
 @login_required 
 def editar_servico(request, servico_id):
