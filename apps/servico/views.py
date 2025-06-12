@@ -100,13 +100,24 @@ def todos_servicos(request):
 
     mes_nome = meses[int(mes_numero) - 1][0] if mes_numero else ''
 
+    status_order = {
+        'V': 0,
+        'I': 1,
+        'Co': 2,
+        'A': 3,
+        'E': 4,
+        'P': 5,
+        'C': 6,
+    }
+
+    ordenacao = Case(
+        *[When(status=k, then=Value(v)) for k, v in status_order.items()],
+        output_field=IntegerField()
+    )
+
     todo_servico = Servico.objects.annotate(
-        concluido_order=Case(
-            When(status='C', then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField()
-        )
-    ).order_by('concluido_order', 'status')
+        status_order=ordenacao
+    ).order_by('status_order')
 
     if query:
         todo_servico = todo_servico.filter(cliente__icontains=query)
