@@ -2,92 +2,137 @@
 {% load custom_filters %}
 
 {% block subtitulo %}
-    <h3 class="text-center"> Custos Operacionais</h3>
+    <h3 class="text-center mt-4"> Custos Operacionais</h3>
 {% endblock %}
 
 {% block material %}
-<form method="GET" class="mb-3">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 col-sm-12 mb-3">
-                <select name="projeto" class="form-control">
-                    <option value="">-- Selecione o Projeto --</option>
-                    {% for projeto in projetos %}
-                        <option value="{{ projeto.cliente }}" {% if projeto.cliente == projeto_filtro %}selected{% endif %}>
-                            {{ projeto.cliente }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-auto mb-3">
-                <button type="submit" class="btn btn-primary w-100 w-md-auto">Filtrar</button>
-            </div>
+<form method="GET" class="mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label for="projeto" class="form-label fw-bold">Projeto</label>
+            <select name="projeto" class="form-select" id="projeto">
+                <option value="">-- Selecione --</option>
+                {% for projeto in projetos %}
+                    <option value="{{ projeto.cliente }}" {% if projeto.cliente == projeto_filtro %}selected{% endif %}>
+                        {{ projeto.cliente }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
         </div>
     </div>
 </form>
-<form action="{% url 'gerar_relatorio' %}" method="get">
+
+<form action="{% url 'gerar_relatorio' %}" method="get" class="mb-3">
     <input type="hidden" name="projeto" value="{{ projeto_filtro }}">
-    <button type="submit" class="btn btn-success">Gerar Relatório PDF</button>
+    <button type="submit" class="btn btn-outline-success">
+        <i class="fas fa-file-pdf"></i> Gerar Relatório PDF
+    </button>
 </form>
 
 {% if projeto_filtro %}
-    <div class="mt-3">
-        <strong>Valor do Empreendimento:</strong>
-        {% for projeto in projetos %}
-            {% if projeto.cliente == projeto_filtro %}
-                <span><strong>{{ projeto.valor_empreendimento | formatar_valor }}</strong></span>
-            {% endif %}
-        {% endfor %}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="alert alert-warning d-flex justify-content-between align-items-center shadow-sm">
+                <div>
+                    <strong>Custos Operacionais:</strong><br>
+                    {{ total_valor|formatar_valor }}
+                    {% if porcentagem %}
+                        <span class="text-muted">({{ porcentagem|floatformat:2 }}%)</span>
+                    {% endif %}
+                </div>
+                <i class="fas fa-coins fa-2x text-warning"></i>
+            </div>
+        </div>
+
+        {% if saldo_restante %}
+        <div class="col-md-6">
+            <div class="alert alert-success d-flex justify-content-between align-items-center shadow-sm">
+                <div>
+                    <strong>Saldo Restante:</strong><br>
+                    {{ saldo_restante|formatar_valor }}
+                </div>
+                <i class="fas fa-wallet fa-2x text-success"></i>
+            </div>
+        </div>
+        {% endif %}
     </div>
 {% endif %}
 
-<tfoot>
-    <tr class="table-dark">
-        <td colspan="2"><strong>Custos Operacionais: </strong></td>
-        <td><strong>{{ total_valor|formatar_valor }}
-            {% if porcentagem %}
-                ({{ porcentagem|floatformat:2 }}%)
-            {% endif %}
-        </strong></td>
-        <td colspan="4"></td>
-    </tr>
-    <br>
-    {% if saldo_restante %}
-        <tr class="table-dark">
-            <td colspan="2"><strong>Saldo Restante:</strong></td>
-            <td><strong>{{ saldo_restante|formatar_valor }}</strong></td>
-            <td colspan="4"></td>
-        </tr>
-    {% endif %}
-</tfoot>
-
-<div class="table-responsive mt-3">
-    <table class="table table-striped">
-        <thead class="table-dark">
+<div class="table-responsive mt-4">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark text-center">
             <tr>
                 <th>Projeto</th>
-                <th>Descricao</th>
+                <th>Descrição</th>
                 <th>Valor</th>
-                <th>Data compra</th>
-                <th>Observacao</th>
-                <th>Editar</th>
-                <th>Remover</th>
+                <th>Data Compra</th>
+                <th>Observação</th>
+                <th colspan="2">Ações</th>
             </tr>
         </thead>
         <tbody>
-            {% for custo in custos %}
+            {% if custos %}
+                {% for custo in custos %}
+                    <tr>
+                        <td>{{ custo.projeto }}</td>
+                        <td>{{ custo.descricao }}</td>
+                        <td>{{ custo.valor | formatar_valor }}</td>
+                        <td>{{ custo.data_compra }}</td>
+                        <td>{{ custo.observacao }}</td>
+                        <td>
+                            <a href="{% url 'atualizar_custos' pk=custo.id %}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Editar este item">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'deletar_custos' pk=custo.id %}" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Remover este item" onclick="return confirm('Tem certeza que deseja excluir este custo?');">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
                 <tr>
-                    <td>{{ custo.projeto }}</td>
-                    <td>{{ custo.descricao }}</td>
-                    <td>{{ custo.valor | formatar_valor }}</td>
-                    <td>{{ custo.data_compra }}</td>
-                    <td>{{ custo.observacao }}</td>
-                    <td><a href="{% url 'atualizar_custos' pk=custo.id %}" class="btn btn-sm btn-warning">Editar</a></td>
-                    <td><a href="{% url 'deletar_custos' pk=custo.id %}" class="btn btn-sm btn-danger">Remover</a></td>
+                    <td colspan="7" class="text-center text-muted">Nenhum custo operacional encontrado para este projeto.</td>
                 </tr>
-            {% endfor %}
+            {% endif %}
         </tbody>
+        <tfoot class="table-light fw-bold">
+            <tr>
+                <td colspan="2">Custos Operacionais:</td>
+                <td>
+                    {{ total_valor|formatar_valor }}
+                    {% if porcentagem %}
+                        ({{ porcentagem|floatformat:2 }}%)
+                    {% endif %}
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            {% if saldo_restante %}
+            <tr>
+                <td colspan="2">Saldo Restante:</td>
+                <td>{{ saldo_restante|formatar_valor }}</td>
+                <td colspan="4"></td>
+            </tr>
+            {% endif %}
+        </tfoot>
     </table>
 </div>
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
 {% endblock %}
+
