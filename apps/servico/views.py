@@ -147,8 +147,9 @@ def todos_servicos(request):
     return render(request, 'servico_todos.html', {
         'page_obj': page_obj,
         'query': query,
-        'mes': mes_nome,
-        'ano': ano
+        'mes': mes_numero,
+        'ano': ano,
+        'meses': list(enumerate(meses, start=1)),
     })
 
 @login_required 
