@@ -250,29 +250,38 @@ document.querySelectorAll('.open-details').forEach(link => {
         event.preventDefault();
         const servicoId = this.dataset.id;
 
+        const detailsContent = document.getElementById('detailsContent');
+        detailsContent.innerHTML = `
+          <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
+            <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+            <span class="ms-2">Carregando...</span>
+          </div>
+        `;
+
         fetch(`/servico/servico/${servicoId}/detalhes`)
             .then(response => response.json())
             .then(data => {
                 const detalhes = `
-                    <strong>Cliente:</strong> ${data.cliente} <br>
-                    <strong>Telefone:</strong> ${data.telefone} <br>
-                    <strong>Tipo de Serviço:</strong> ${data.tipo_servico} <br>
-                    <strong>Status:</strong> ${data.status} <br>
-                    <strong>Valor Empreendimento:</strong> R$ ${data.valor_empreendimento} <br>
-                    <strong>Valor Custos:</strong> R$ ${data.valor_custos} <br>
-                    <strong>Valor Lucro:</strong> R$ ${data.valor_lucro ?? 'Não informado'} <br>
-                    <strong>Email:</strong> ${data.email} <br>
-                    <strong>Mês:</strong> ${data.mes} <br>
-                    <strong>Ano:</strong> ${data.ano} <br>
-                    <strong>Foto Documento:</strong> ${data.foto_documento ? `<a href="${data.foto_documento}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
-                    <strong>Comprovante Endereço:</strong> ${data.comoprovante_endereco ? `<a href="${data.comoprovante_endereco}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
-                    <strong>Comprovante Renda:</strong> ${data.comoprovante_renda ? `<a href="${data.comoprovante_renda}" target="_blank">Ver Documento</a>` : 'Não enviado'} <br>
+                    <div class="detail-item"><i class="fas fa-user"></i> <span class="detail-label">Cliente:</span> <span class="detail-value">${data.cliente}</span></div>
+                    <div class="detail-item"><i class="fas fa-phone"></i> <span class="detail-label">Telefone:</span> <span class="detail-value">${data.telefone}</span></div>
+                    <div class="detail-item"><i class="fas fa-tools"></i> <span class="detail-label">Tipo Serviço:</span> <span class="detail-value">${data.tipo_servico}</span></div>
+                    <div class="detail-item"><i class="fas fa-info-circle"></i> <span class="detail-label">Status:</span> <span class="detail-value">${data.status}</span></div>
+                    <div class="detail-item"><i class="fas fa-dollar-sign"></i> <span class="detail-label">Valor Empreendimento:</span> <span class="detail-value">R$ ${data.valor_empreendimento}</span></div>
+                    <div class="detail-item"><i class="fas fa-wallet"></i> <span class="detail-label">Valor Custos:</span> <span class="detail-value">R$ ${data.valor_custos}</span></div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> <span class="detail-label">Valor Lucro:</span> <span class="detail-value">${data.valor_lucro ?? 'Não informado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-envelope"></i> <span class="detail-label">Email:</span> <span class="detail-value">${data.email}</span></div>
+                    <div class="detail-item"><i class="fas fa-calendar-alt"></i> <span class="detail-label">Mês:</span> <span class="detail-value">${data.mes}</span></div>
+                    <div class="detail-item"><i class="fas fa-calendar"></i> <span class="detail-label">Ano:</span> <span class="detail-value">${data.ano}</span></div>
+                    <div class="detail-item"><i class="fas fa-file-image"></i> <span class="detail-label">Foto Documento:</span> <span class="detail-value">${data.foto_documento ? `<a href="${data.foto_documento}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <span class="detail-label">Comprovante Endereço:</span> <span class="detail-value">${data.comoprovante_endereco ? `<a href="${data.comoprovante_endereco}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-file-invoice-dollar"></i> <span class="detail-label">Comprovante Renda:</span> <span class="detail-value">${data.comoprovante_renda ? `<a href="${data.comoprovante_renda}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
                 `;
-                document.getElementById('detailsContent').innerHTML = detalhes;
+                detailsContent.innerHTML = detalhes;
                 new bootstrap.Modal(document.getElementById('detailsModal')).show();
             })
             .catch(() => {
-                document.getElementById('detailsContent').innerHTML = 'Erro ao carregar os detalhes.';
+                detailsContent.innerHTML = '<div class="alert alert-danger text-center">Erro ao carregar os detalhes.</div>';
+                new bootstrap.Modal(document.getElementById('detailsModal')).show();
             });
     });
 });
