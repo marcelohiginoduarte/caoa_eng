@@ -49,12 +49,10 @@ def dash_servico(request):
     mes_atual = mes[data_atual.month -1][0]
     ano_atual = str(data_atual.year)
 
-    print(f"Filtrando por Ano: {ano_atual}, Mês: {mes_atual}")
     total_valor_vendido_mes = Servico.objects.filter(
         ano=ano_atual, 
         mes__iexact=mes_atual,
     ).aggregate(total=Sum('valor_empreendimento'))['total'] or 0
-    print(total_valor_vendido_mes)
 
     total_valor_vendido = Servico.objects.aggregate(total=Sum('valor_empreendimento'))['total'] or 0
 
