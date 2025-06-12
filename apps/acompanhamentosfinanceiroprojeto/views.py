@@ -10,9 +10,12 @@ from io import BytesIO
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib import colors
-
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from io import BytesIO
+from datetime import datetime
+import os
 
 
 @login_required
@@ -85,43 +88,84 @@ class DeletarCustos(DeleteView):
 
 def gerar_relatorio(request):
     projeto_filtro = request.GET.get('projeto', None)
-    
+
     if projeto_filtro:
         custos = AcompanhamentoDespesasProjeto.objects.filter(projeto__cliente=projeto_filtro)
     else:
         custos = AcompanhamentoDespesasProjeto.objects.all()
-    
-    buffer = BytesIO()
 
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=30, leftMargin=30, topMargin=100, bottomMargin=50)
+
+    elements = []
+    styles = getSampleStyleSheet()
+
+    titulo_style = ParagraphStyle(
+        name='Titulo',
+        parent=styles['Title'],
+        fontSize=16,
+        alignment=1,
+        textColor=colors.HexColor('#003366'),
+        spaceAfter=10
+    )
+
+    logo_path = os.path.join('media', 'logo_caoa.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path, width=120, height=50)
+        img.hAlign = 'LEFT'
+        elements.append(img)
+
+    elements.append(Paragraph("Relatório de Custos Operacionais", titulo_style))
+    elements.append(Paragraph(f"<b>Empresa:</b> Caoa Engenharia", styles['Normal']))
+    if projeto_filtro:
+        elements.append(Paragraph(f"<b>Projeto:</b> {projeto_filtro}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Data:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles['Normal']))
+    elements.append(Spacer(1, 12))
 
     data = [['Projeto', 'Descrição', 'Valor', 'Data Compra', 'Observação']]
-    
     for custo in custos:
         data.append([
-            custo.projeto.cliente, 
-            custo.descricao, 
-            f'{custo.valor:,.2f}',
-            custo.data_compra.strftime('%d/%m/%Y'),  
+            custo.projeto.cliente,
+            custo.descricao,
+            f'R$ {custo.valor:,.2f}',
+            custo.data_compra.strftime('%d/%m/%Y'),
             custo.observacao or '-'
         ])
 
-    table = Table(data)
+    table = Table(data, hAlign='CENTER', colWidths=[100, 130, 80, 90, 130])
 
     style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#003366")),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('ALIGN', (1, 1), (-1, -1), 'LEFT'),
-    ])
-    table.setStyle(style)
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
 
-    doc.build([table])
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor("#f2f2f2")),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('ALIGN', (2, 1), (2, -1), 'RIGHT'),
+
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ])
+
+    table.setStyle(style)
+    elements.append(table)
+
+    def add_page_number(canvas, doc):
+        page_num_text = f"Página {doc.page}"
+        canvas.saveState()
+        canvas.setFont('Helvetica', 8)
+        canvas.drawString(500, 15, page_num_text)
+        canvas.restoreState()
+
+    doc.build(elements, onFirstPage=add_page_number, onLaterPages=add_page_number)
 
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
