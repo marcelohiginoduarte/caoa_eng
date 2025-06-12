@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.db.models import Case, When, Value, IntegerField
 
 
 @login_required 
@@ -99,7 +100,13 @@ def todos_servicos(request):
 
     mes_nome = meses[int(mes_numero) - 1][0] if mes_numero else ''
 
-    todo_servico = Servico.objects.all().order_by('id')
+    todo_servico = Servico.objects.annotate(
+        concluido_order=Case(
+            When(status='C', then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+    ).order_by('concluido_order', 'status')
 
     if query:
         todo_servico = todo_servico.filter(cliente__icontains=query)
