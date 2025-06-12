@@ -120,8 +120,11 @@ def todos_servicos(request):
 
         if sv.valor_empreendimento:
             sv.porcentagem_custos = round((total_custos / sv.valor_empreendimento) * 100, 2)
+            sv.valor_lucro = sv.valor_empreendimento - total_custos
         else:
             sv.porcentagem_custos = 0
+            sv.valor_lucro = 0
+
 
     return render(request, 'servico_todos.html', {
         'page_obj': page_obj,
@@ -148,7 +151,7 @@ class DeletarServico(DeleteView):
     template_name = 'servico__confirm_delete.html'
     success_url = reverse_lazy('todos_servicos')
 
-
+@login_required
 def detalhes_servico_json(request, id):
     ver_detalhe_servico = get_object_or_404(Servico, id=id)
 
@@ -169,6 +172,7 @@ def detalhes_servico_json(request, id):
     }
 
     return JsonResponse(data)
+
 
 def login_view(request):
     if request.method == "POST":
@@ -191,7 +195,7 @@ def logout(request):
     return redirect("login")
 
 
-
+@login_required
 def grafico_servico(request):
     servicos_por_mes = (Servico.objects.values('mes').annotate(total=Count('id')).order_by('mes'))
 
