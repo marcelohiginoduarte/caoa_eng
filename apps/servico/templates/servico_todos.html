@@ -114,12 +114,22 @@
                         <td>{{ sv.cidade }}</td>
                         <td>{{ sv.valor_empreendimento|formatar_valor }}</td>
                         <td>
-                            {{ sv.valor_custos|formatar_valor }}
-                            {% if sv.valor_empreendimento %}
-                                ({{ sv.porcentagem_custos }}%)
+                            {% if sv.get_status_display == "Concluido" %}
+                                ✅Prj Fechado!
+                            {% else %}
+                                {{ sv.valor_custos|formatar_valor }}
+                                {% if sv.valor_empreendimento %}
+                                    ({{ sv.porcentagem_custos }}%)
+                                {% endif %}
                             {% endif %}
                         </td>
-                        <td>{{ sv.valor_lucro|formatar_valor }}</td>
+                        <td>
+                            {% if sv.get_status_display == "Concluido" %}
+                                ✅Prj Fechado!
+                            {% else %}
+                                {{ sv.valor_lucro|formatar_valor }}
+                            {% endif %}
+                        </td>
                         <td>{{ sv.email }}</td>
                         <td>{{ sv.mes }}</td>
                         <td>{{ sv.ano }}</td>
