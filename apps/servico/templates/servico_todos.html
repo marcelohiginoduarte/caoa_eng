@@ -208,8 +208,8 @@
                             </ul>
                         </div>
                     </td>
-                    <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a></td>
-                    <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este serviço?')"><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href="{% url 'editar_servico' sv.id %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Editar</a></td>
+                    <td><a href="{% url 'deletarservico' pk=sv.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este serviço?')"><i class="fas fa-trash-alt"></i>Deletar</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -217,7 +217,7 @@
     </div>
 </div>
 
-<!-- Modal para Detalhes -->
+
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content shadow-lg rounded-4 border-0">
@@ -245,6 +245,11 @@
 </div>
 
 <script>
+function formatarValor(valor) {
+  if (valor === null || valor === undefined || valor === '') return 'Não informado';
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
 document.querySelectorAll('.open-details').forEach(link => {
     link.addEventListener('click', function(event) {
         event.preventDefault();
@@ -266,15 +271,15 @@ document.querySelectorAll('.open-details').forEach(link => {
                     <div class="detail-item"><i class="fas fa-phone"></i> <span class="detail-label">Telefone:</span> <span class="detail-value">${data.telefone}</span></div>
                     <div class="detail-item"><i class="fas fa-tools"></i> <span class="detail-label">Tipo Serviço:</span> <span class="detail-value">${data.tipo_servico}</span></div>
                     <div class="detail-item"><i class="fas fa-info-circle"></i> <span class="detail-label">Status:</span> <span class="detail-value">${data.status}</span></div>
-                    <div class="detail-item"><i class="fas fa-dollar-sign"></i> <span class="detail-label">Valor Empreendimento:</span> <span class="detail-value">R$ ${data.valor_empreendimento}</span></div>
-                    <div class="detail-item"><i class="fas fa-wallet"></i> <span class="detail-label">Valor Custos:</span> <span class="detail-value">R$ ${data.valor_custos}</span></div>
-                    <div class="detail-item"><i class="fas fa-coins"></i> <span class="detail-label">Valor Lucro:</span> <span class="detail-value">${data.valor_lucro ?? 'Não informado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-dollar-sign"></i> <span class="detail-label">Valor Empreendimento:</span> <span class="detail-value">${formatarValor(data.valor_empreendimento)}</span></div>
+                    <div class="detail-item"><i class="fas fa-wallet"></i> <span class="detail-label">Valor Custos:</span> <span class="detail-value">${formatarValor(data.valor_custos)}</span></div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> <span class="detail-label">Valor Lucro:</span> <span class="detail-value">${formatarValor(data.valor_lucro)}</span></div>
                     <div class="detail-item"><i class="fas fa-envelope"></i> <span class="detail-label">Email:</span> <span class="detail-value">${data.email}</span></div>
                     <div class="detail-item"><i class="fas fa-calendar-alt"></i> <span class="detail-label">Mês:</span> <span class="detail-value">${data.mes}</span></div>
                     <div class="detail-item"><i class="fas fa-calendar"></i> <span class="detail-label">Ano:</span> <span class="detail-value">${data.ano}</span></div>
                     <div class="detail-item"><i class="fas fa-file-image"></i> <span class="detail-label">Foto Documento:</span> <span class="detail-value">${data.foto_documento ? `<a href="${data.foto_documento}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
-                    <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <span class="detail-label">Comprovante Endereço:</span> <span class="detail-value">${data.comoprovante_endereco ? `<a href="${data.comoprovante_endereco}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
-                    <div class="detail-item"><i class="fas fa-file-invoice-dollar"></i> <span class="detail-label">Comprovante Renda:</span> <span class="detail-value">${data.comoprovante_renda ? `<a href="${data.comoprovante_renda}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <span class="detail-label">Comprovante Endereço:</span> <span class="detail-value">${data.comprovante_endereco ? `<a href="${data.comprovante_endereco}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
+                    <div class="detail-item"><i class="fas fa-file-invoice-dollar"></i> <span class="detail-label">Comprovante Renda:</span> <span class="detail-value">${data.comprovante_renda ? `<a href="${data.comprovante_renda}" target="_blank" class="link-primary">Ver Documento</a>` : 'Não enviado'}</span></div>
                 `;
                 detailsContent.innerHTML = detalhes;
                 new bootstrap.Modal(document.getElementById('detailsModal')).show();
