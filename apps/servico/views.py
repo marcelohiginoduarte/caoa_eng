@@ -3,6 +3,7 @@ from django.db.models import Sum, Count
 from .forms import CadastrarServicoforms
 from acompanhamentosfinanceiroprojeto.models import AcompanhamentoDespesasProjeto
 from .models import Servico
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 from django.utils.timezone import now
@@ -15,7 +16,7 @@ from django.db.models import Count
 from django.db.models import Case, When, Value, IntegerField
 
 
-@login_required 
+@login_required
 def home(request):
     return redirect('login')
 
@@ -163,10 +164,11 @@ def editar_servico(request, servico_id):
     return render(request, 'servico_editar.html', {'form': form})
 
 
-class DeletarServico(DeleteView):
+class DeletarServico(LoginRequiredMixin, DeleteView):
     model = Servico
     template_name = 'servico__confirm_delete.html'
     success_url = reverse_lazy('todos_servicos')
+    login_url = 'login' 
 
 @login_required
 def detalhes_servico_json(request, id):

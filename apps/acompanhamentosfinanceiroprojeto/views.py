@@ -3,6 +3,7 @@ from .models import AcompanhamentoDespesasProjeto
 from .forms import CriarAcompanhamentoDespesasForms
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.contrib.auth.mixins import LoginRequiredMixin
 from servico.models import Servico
 from django.views.generic import DeleteView, UpdateView
 from django.urls import reverse_lazy
@@ -31,6 +32,7 @@ def criar_despesa_projeto(request):
         form = CriarAcompanhamentoDespesasForms()
 
     return render(request, 'criar_despesa_projeto.html', {'form': form})
+
 
 @login_required
 def ver_despesas_projeto(request):
@@ -72,20 +74,21 @@ def ver_despesas_projeto(request):
     })
 
 
-
-class AtualizarCustos(UpdateView):
+class AtualizarCustos(LoginRequiredMixin, UpdateView):
     model = AcompanhamentoDespesasProjeto
     template_name = 'custos_atualizar.html'
     form_class = CriarAcompanhamentoDespesasForms
     success_url = reverse_lazy('criardespesaprojetotodas')
+    login_url = 'login'
 
-
-class DeletarCustos(DeleteView):
+class DeletarCustos(LoginRequiredMixin, DeleteView):
     model = AcompanhamentoDespesasProjeto
     template_name = 'custos__confirm_delete.html'
     success_url = reverse_lazy('criardespesaprojetotodas')
+    login_url = 'login'
 
 
+@login_required
 def gerar_relatorio(request):
     projeto_filtro = request.GET.get('projeto', None)
 
