@@ -1,10 +1,9 @@
 from django.db import models
 from .validators import validar_telefone
 from lista_vendedores.models import ListaVendedores
+from django.db.models import Sum
 
 class Servico(models.Model):
-
-    """ Modelo que representa um serviço executado em campo """
 
     tipo_servicos = [
         ('Eng_Solar', 'Energia solar'),
@@ -23,31 +22,31 @@ class Servico(models.Model):
         ('P' ,'Pendente'),
     ]
 
-    mes = [
-    ('Janeiro', 'Jan'),
-    ('Fevereiro', 'Fev'),
-    ('Março', 'Mar'),
-    ('Abril', 'Abr'),
-    ('Maio', 'Mai'),
-    ('Junho', 'Jun'),
-    ('Julho', 'Jul'),
-    ('Agosto', 'Ago'),
-    ('Setembro', 'Set'),
-    ('Outubro', 'Out'),
-    ('Novembro', 'Nov'),
-    ('Dezembro', 'Dez'),
-]
+    MESES = [
+        ('Janeiro', 'Jan'),
+        ('Fevereiro', 'Fev'),
+        ('Março', 'Mar'),
+        ('Abril', 'Abr'),
+        ('Maio', 'Mai'),
+        ('Junho', 'Jun'),
+        ('Julho', 'Jul'),
+        ('Agosto', 'Ago'),
+        ('Setembro', 'Set'),
+        ('Outubro', 'Out'),
+        ('Novembro', 'Nov'),
+        ('Dezembro', 'Dez'),
+    ]
 
-    cliente = models.CharField( "Nome do cliente", max_length=150, null=False, blank=False, help_text="cliente que vamos prestar o seviço")
+    cliente = models.CharField("Nome do cliente", max_length=150, null=False, blank=False)
     telefone = models.CharField(max_length=15, null=False, blank=False)
-    tipo_serviço = models.CharField(choices=tipo_servicos,max_length=14, default='Eng_Solar')
+    tipo_serviço = models.CharField(choices=tipo_servicos, max_length=14, default='Eng_Solar')
     status = models.CharField(choices=status_servico, max_length=10, default='V')
     cidade = models.CharField(max_length=150, blank=True, null=True)
-    valor_empreendimento = models.DecimalField(max_digits=10, decimal_places=2) 
-    valor_custos = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_lucro = models.DecimalField(max_digits=10, decimal_places=2)
-    email = models.EmailField(blank=False, null=False)
-    mes = models.CharField(max_length=10, choices=mes)
+    valor_empreendimento = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_custos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    valor_lucro = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    email = models.EmailField()
+    mes = models.CharField(max_length=10, choices=MESES)
     ano = models.CharField(max_length=4, blank=True)
     foto_documento = models.FileField(upload_to='documentos/')
     comoprovante_endereco = models.FileField(upload_to='documentos/')
@@ -55,14 +54,19 @@ class Servico(models.Model):
     vendedor = models.ForeignKey(ListaVendedores, on_delete=models.CASCADE)
     projeto_ativo = models.BooleanField(default=True)
 
-
     def clean(self):
         validar_telefone(self.telefone)
-    
+
+    def calcular_custos_e_lucro(self):
+        total_custos = self.acompanhamentodespesasprojeto_set.aggregate(soma=Sum('valor'))['soma'] or 0
+        self.valor_custos = total_custos
+        self.valor_lucro = self.valor_empreendimento - total_custos
+
     def save(self, *args, **kwargs):
+        self.calcular_custos_e_lucro()
         if self.status == 'C':
             self.projeto_ativo = False
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return self.cliente
