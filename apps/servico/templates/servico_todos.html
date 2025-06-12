@@ -110,8 +110,10 @@
         <div class="col-md-3">
             <select name="mes" class="form-select">
                 <option value="">Todos os meses</option>
-                {% for i in "123456789101112" %}
-                <option value="{{ i }}" {% if mes == i %}selected{% endif %}>{{ i|date:"F" }}</option>
+                {% for numero, mes in meses %}
+                    <option value="{{ numero }}" {% if mes_selecionado == numero|stringformat:"d" %}selected{% endif %}>
+                        {{ mes.0 }}
+                    </option>
                 {% endfor %}
             </select>
         </div>

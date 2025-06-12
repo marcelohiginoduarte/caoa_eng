@@ -83,7 +83,11 @@
                         <td>{{ custo.descricao }}</td>
                         <td>{{ custo.valor | formatar_valor }}</td>
                         <td>{{ custo.data_compra }}</td>
-                        <td>{{ custo.observacao }}</td>
+                        <td>
+                            {% if custo.observacao %}
+                                {{ custo.observacao }}
+                            {% endif %}
+                        </td>
                         <td>
                             <a href="{% url 'atualizar_custos' pk=custo.id %}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Editar este item">
                                 <i class="fas fa-edit"></i>
