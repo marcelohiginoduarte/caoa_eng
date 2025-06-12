@@ -27,7 +27,6 @@ def ver_todos_vendedores(request):
     hoje = datetime.now()
     ano_atual = str(hoje.year)
 
-    # Estruturas para armazenar os dados
     vendas_por_vendedor = {vendedor.nome: {} for vendedor in ver_vendedores}
     total_vendas_por_vendedor = {vendedor.nome: 0 for vendedor in ver_vendedores}
     total_comissao = {vendedor.nome: 0 for vendedor in ver_vendedores}
@@ -35,7 +34,6 @@ def ver_todos_vendedores(request):
     total_geral_vendas = 0
     total_geral_comissao = 0
 
-    # Iterar sobre os meses
     for num_mes, nome_mes in MESES.items():
         for vendedor in ver_vendedores:
             total_vendas = Venda.objects.filter(
@@ -57,11 +55,9 @@ def ver_todos_vendedores(request):
                 'total_comissao': total_comissao_vendedor
             }
 
-            # Somar os valores totais por vendedor
             total_vendas_por_vendedor[vendedor.nome] += total_vendas
             total_comissao[vendedor.nome] += total_comissao_vendedor
 
-            # Somar os valores gerais
             total_geral_vendas += total_vendas
             total_geral_comissao += total_comissao_vendedor
 
@@ -92,7 +88,7 @@ def criar_vendedor(request):
     
     return render(request, 'vendedores_cadastrar.html', {'form': form})
 
-
+@login_required
 def relatorio_vendas_mensais(request):
     vendas_mensais = VendaMensal.objects.order_by('-ano', '-mes')
     return render(request, 'relatorio_vendas_mensais.html', {'vendas_mensais': vendas_mensais})
