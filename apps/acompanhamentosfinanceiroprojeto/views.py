@@ -10,13 +10,19 @@ from django.urls import reverse_lazy
 from io import BytesIO
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
+from django.views.decorators.csrf import csrf_exempt
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
+from concurrent.futures import ProcessPoolExecutor
+from django.http import FileResponse
 from datetime import datetime
+import zipfile
+import tempfile
 import os
+from django.conf import settings
 
 
 @login_required
@@ -176,3 +182,91 @@ def gerar_relatorio(request):
     nome_arquivo = f'Caoaeng_{nome_projeto}.pdf'.replace(' ', '_')
     response['Content-Disposition'] = f'attachment; filename="{nome_arquivo}"'
     return response
+
+
+@login_required
+def gerar_pdf_por_projeto(cliente):
+    from django.db import connection
+    connection.close()
+
+    custos = AcompanhamentoDespesasProjeto.objects.filter(projeto__cliente=cliente)
+
+    temp_path = os.path.join(settings.MEDIA_ROOT, f"temp_pdfs/{cliente.replace(' ', '_')}.pdf")
+    os.makedirs(os.path.dirname(temp_path), exist_ok=True)
+
+    doc = SimpleDocTemplate(temp_path, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    titulo_style = ParagraphStyle(
+        name='Titulo',
+        parent=styles['Title'],
+        fontSize=16,
+        alignment=1,
+        textColor=colors.HexColor('#003366'),
+        spaceAfter=10
+    )
+
+    logo_path = os.path.join(settings.MEDIA_ROOT, 'logo_caoa.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path, width=120, height=50)
+        img.hAlign = 'LEFT'
+        elements.append(img)
+
+    elements.append(Paragraph("Relatório de Custos Operacionais", titulo_style))
+    elements.append(Paragraph(f"<b>Projeto:</b> {cliente}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Data:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles['Normal']))
+    elements.append(Spacer(1, 12))
+
+    data = [['Descrição', 'Valor', 'Data Compra', 'Observação']]
+    for custo in custos:
+        data.append([
+            custo.descricao,
+            f'R$ {custo.valor:,.2f}',
+            custo.data_compra.strftime('%d/%m/%Y'),
+            custo.observacao or '-'
+        ])
+
+    table = Table(data, hAlign='CENTER', colWidths=[130, 80, 90, 130])
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#003366")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor("#f2f2f2")),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('ALIGN', (1, 1), (1, -1), 'RIGHT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ])
+    table.setStyle(style)
+    elements.append(table)
+
+    doc.build(elements)
+    return temp_path
+
+
+@csrf_exempt
+def gerar_varios_pdfs_zip(request):
+    projetos = AcompanhamentoDespesasProjeto.objects.values_list('projeto__cliente', flat=True).distinct()
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        pdf_dir = os.path.join(temp_dir, "pdfs")
+        os.makedirs(pdf_dir, exist_ok=True)
+
+        def wrapper(cliente):
+            path = gerar_pdf_por_projeto(cliente)
+            return path
+
+        with ProcessPoolExecutor() as executor:
+            resultados = list(executor.map(wrapper, projetos))
+
+        zip_path = os.path.join(temp_dir, "relatorios.zip")
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for pdf_path in resultados:
+                if os.path.exists(pdf_path):
+                    zipf.write(pdf_path, arcname=os.path.basename(pdf_path))
+
+        return FileResponse(open(zip_path, 'rb'), as_attachment=True, filename="relatorios.zip")
