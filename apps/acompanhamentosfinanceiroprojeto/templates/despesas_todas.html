@@ -25,7 +25,7 @@
             </button>
         </div>
     </div>
-</form>
+</form>geratodasasdepesas
 
 <form action="{% url 'gerar_relatorio' %}" method="get" class="mb-3">
     <input type="hidden" name="projeto" value="{{ projeto_filtro }}">
@@ -33,7 +33,7 @@
         <i class="fas fa-file-pdf"></i> Gerar Relatório PDF
     </button>
 </form>
-
+<div><button><a href="{% url 'geratodasasdepesas' %}">Gerar todas</a></button></div>
 {% if projeto_filtro %}
     <div class="row mt-4">
         <div class="col-md-6">

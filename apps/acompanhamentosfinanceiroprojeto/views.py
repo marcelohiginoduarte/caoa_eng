@@ -23,6 +23,7 @@ import zipfile
 import tempfile
 import os
 from django.conf import settings
+from concurrent.futures import ThreadPoolExecutor
 
 
 @login_required
@@ -185,11 +186,13 @@ def gerar_relatorio(request):
 
 
 @login_required
-def gerar_pdf_por_projeto(cliente):
+def gerar_pdf_por_projeto(servico):
     from django.db import connection
     connection.close()
 
-    custos = AcompanhamentoDespesasProjeto.objects.filter(projeto__cliente=cliente)
+    custos = AcompanhamentoDespesasProjeto.objects.filter(projeto=servico)
+
+    cliente = servico.cliente
 
     temp_path = os.path.join(settings.MEDIA_ROOT, f"temp_pdfs/{cliente.replace(' ', '_')}.pdf")
     os.makedirs(os.path.dirname(temp_path), exist_ok=True)
@@ -248,19 +251,24 @@ def gerar_pdf_por_projeto(cliente):
     return temp_path
 
 
+def wrapper(servico):
+    return gerar_relatorio(servico)
+
 @csrf_exempt
+@login_required
 def gerar_varios_pdfs_zip(request):
-    projetos = AcompanhamentoDespesasProjeto.objects.values_list('projeto__cliente', flat=True).distinct()
+    projetos = (
+        Servico.objects
+        .filter(acompanhamentodespesasprojeto__isnull=False)
+        .order_by('id')
+        .distinct()
+    )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         pdf_dir = os.path.join(temp_dir, "pdfs")
         os.makedirs(pdf_dir, exist_ok=True)
 
-        def wrapper(cliente):
-            path = gerar_pdf_por_projeto(cliente)
-            return path
-
-        with ProcessPoolExecutor() as executor:
+        with ThreadPoolExecutor() as executor:
             resultados = list(executor.map(wrapper, projetos))
 
         zip_path = os.path.join(temp_dir, "relatorios.zip")
