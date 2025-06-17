@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import AcompanhamentoDespesasProjeto
-from .forms import CriarAcompanhamentoDespesasForms
+from apps.acompanhamentosfinanceiroprojeto.models import AcompanhamentoDespesasProjeto
+from apps.acompanhamentosfinanceiroprojeto.forms import CriarAcompanhamentoDespesasForms
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -87,6 +87,7 @@ class AtualizarCustos(LoginRequiredMixin, UpdateView):
     form_class = CriarAcompanhamentoDespesasForms
     success_url = reverse_lazy('criardespesaprojetotodas')
     login_url = 'login'
+
 
 class DeletarCustos(LoginRequiredMixin, DeleteView):
     model = AcompanhamentoDespesasProjeto
@@ -185,16 +186,12 @@ def gerar_relatorio(request):
     return response
 
 
-@login_required
-def gerar_pdf_por_projeto(servico):
-    from django.db import connection
-    connection.close()
 
+def gerar_pdf_por_projeto(servico, output_dir):
     custos = AcompanhamentoDespesasProjeto.objects.filter(projeto=servico)
-
     cliente = servico.cliente
 
-    temp_path = os.path.join(settings.MEDIA_ROOT, f"temp_pdfs/{cliente.replace(' ', '_')}.pdf")
+    temp_path = os.path.join(output_dir, f"{cliente.replace(' ', '_')}.pdf")
     os.makedirs(os.path.dirname(temp_path), exist_ok=True)
 
     doc = SimpleDocTemplate(temp_path, pagesize=letter)
@@ -250,13 +247,13 @@ def gerar_pdf_por_projeto(servico):
     doc.build(elements)
     return temp_path
 
-
 def wrapper(servico):
-    return gerar_relatorio(servico)
+    return gerar_pdf_por_projeto(servico)
 
 @csrf_exempt
 @login_required
 def gerar_varios_pdfs_zip(request):
+    print('Iniciando geração dos PDFs...')
     projetos = (
         Servico.objects
         .filter(acompanhamentodespesasprojeto__isnull=False)
@@ -264,17 +261,43 @@ def gerar_varios_pdfs_zip(request):
         .distinct()
     )
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        pdf_dir = os.path.join(temp_dir, "pdfs")
-        os.makedirs(pdf_dir, exist_ok=True)
+    if not projetos.exists():
+        return HttpResponse("Nenhum projeto encontrado para gerar relatório.", status=404)
 
-        with ThreadPoolExecutor() as executor:
-            resultados = list(executor.map(wrapper, projetos))
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            pdf_dir = os.path.join(temp_dir, "pdfs")
+            os.makedirs(pdf_dir, exist_ok=True)
 
-        zip_path = os.path.join(temp_dir, "relatorios.zip")
-        with zipfile.ZipFile(zip_path, 'w') as zipf:
-            for pdf_path in resultados:
-                if os.path.exists(pdf_path):
+            resultados = []
+            for servico in projetos:
+                print(f"Gerando PDF para o projeto: {servico}")
+                try:
+                    pdf_path = gerar_pdf_por_projeto(servico, pdf_dir)
+                    if os.path.exists(pdf_path):
+                        resultados.append(pdf_path)
+                    else:
+                        print(f"Aviso: PDF não encontrado para o projeto {servico} no caminho {pdf_path}")
+                except Exception as e:
+                    print(f"Erro ao gerar PDF para {servico}: {e}")
+
+            if not resultados:
+                return HttpResponse("Nenhum PDF foi gerado.", status=500)
+
+            zip_path = os.path.join(temp_dir, "relatorios.zip")
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for pdf_path in resultados:
                     zipf.write(pdf_path, arcname=os.path.basename(pdf_path))
 
-        return FileResponse(open(zip_path, 'rb'), as_attachment=True, filename="relatorios.zip")
+            with open(zip_path, 'rb') as zip_file:
+                zip_data = zip_file.read()
+
+            response = HttpResponse(zip_data, content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename="relatorios.zip"'
+            return response
+
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        print(f"Erro geral na geração dos PDFs:\n{tb}")
+        return HttpResponse(f"Erro interno ao gerar os relatórios:<br><pre>{tb}</pre>", status=500)
