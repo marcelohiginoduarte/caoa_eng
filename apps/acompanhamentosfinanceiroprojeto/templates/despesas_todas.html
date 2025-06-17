@@ -25,15 +25,24 @@
             </button>
         </div>
     </div>
-</form>geratodasasdepesas
-
-<form action="{% url 'gerar_relatorio' %}" method="get" class="mb-3">
-    <input type="hidden" name="projeto" value="{{ projeto_filtro }}">
-    <button type="submit" class="btn btn-outline-success">
-        <i class="fas fa-file-pdf"></i> Gerar Relatório PDF
-    </button>
 </form>
-<div><button><a href="{% url 'geratodasasdepesas' %}">Gerar todas</a></button></div>
+
+<div class="d-flex mb-3">
+    <form action="{% url 'gerar_relatorio' %}" method="get" class="me-3">
+        <input type="hidden" name="projeto" value="{{ projeto_filtro }}">
+        <div class="mb-3">
+            <button id="btnGerarTodas" class="btn btn-outline-primary">
+                <i class="fas fa-file-archive"></i> Gerar PDF
+            </button>
+        </div>
+    </form>
+    <div>
+        <button id="btnGerarTodas" class="btn btn-outline-primary">
+            <a href="{% url 'geratodasasdepesas' %}">Gerar todos</a>
+        </button>
+    </div>
+</div>
+
 {% if projeto_filtro %}
     <div class="row mt-4">
         <div class="col-md-6">
@@ -128,6 +137,15 @@
     </table>
 </div>
 
+<div id="modalGerarPDF" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5); z-index:1050;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);
+              background:#fff;padding:20px;border-radius:5px;text-align:center; min-width:250px;">
+    <p>Gerando PDFs, aguarde...</p>
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; margin:auto;">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -136,6 +154,36 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
+    document.getElementById('btnGerarTodas').addEventListener('click', function() {
+        const modal = document.getElementById('modalGerarPDF');
+        modal.style.display = 'block';
+
+        fetch("{% url 'geratodasasdepesas' %}", {  // substitua pela sua url correta
+            method: 'GET',
+            headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao gerar arquivo.');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "relatorios.zip";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            modal.style.display = 'none';
+        })
+        .catch(err => {
+            alert(err.message);
+            modal.style.display = 'none';
+        });
+        });
 </script>
 
 {% endblock %}
