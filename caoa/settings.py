@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'vendas',
     'lista_vendedores',
     'relatorios',
-    'acompanhamentosfinanceiroprojeto',
+    'apps.acompanhamentosfinanceiroprojeto',
     'django.contrib.admindocs',
 ]
 

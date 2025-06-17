@@ -1,6 +1,6 @@
 from django import forms
 from servico.models import Servico
-from .models import AcompanhamentoDespesasProjeto
+from apps.acompanhamentosfinanceiroprojeto.models import AcompanhamentoDespesasProjeto
 
 
 class CriarAcompanhamentoDespesasForms(forms.ModelForm):
