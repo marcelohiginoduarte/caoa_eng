@@ -158,7 +158,7 @@
         const modal = document.getElementById('modalGerarPDF');
         modal.style.display = 'block';
 
-        fetch("{% url 'geratodasasdepesas' %}", {  // substitua pela sua url correta
+        fetch("{% url 'geratodasasdepesas' %}", {
             method: 'GET',
             headers: {
             'X-Requested-With': 'XMLHttpRequest'

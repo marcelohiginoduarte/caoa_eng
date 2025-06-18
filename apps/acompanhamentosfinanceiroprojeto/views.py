@@ -20,10 +20,13 @@ from concurrent.futures import ProcessPoolExecutor
 from django.http import FileResponse
 from datetime import datetime
 import zipfile
+import json
 import tempfile
 import os
 from django.conf import settings
 from concurrent.futures import ThreadPoolExecutor
+import joblib
+import pandas as pd
 
 
 @login_required
@@ -299,5 +302,40 @@ def gerar_varios_pdfs_zip(request):
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
-        print(f"Erro geral na geração dos PDFs:\n{tb}")
         return HttpResponse(f"Erro interno ao gerar os relatórios:<br><pre>{tb}</pre>", status=500)
+
+modelo = joblib.load('modelo_lm/modelo_previsao_valor.pkl')
+modelo = joblib.load('modelo_lm/encoder_descricoes.pkl')
+
+
+def prever_orcamento(descricao, nome_projeto, tipo_servico):
+    df_input = pd.DataFrame([{
+        'descricao': descricao,
+        'nome_projeto': nome_projeto,
+        'tipo_servico': tipo_servico
+    }])
+
+    x_encoded = encoder.transform(df_input)
+
+    valor_previsto = modelo.predict(x_encoded)
+
+    return valor_previsto[0]
+
+
+@csrf_exempt
+def consultar_orcamento(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        descricao = data.get('descricao')
+        nome_projeto = data.get('nome_projeto')
+        tipo_servico = data.get('tipo_servico')
+
+        if not all([descricao, nome_projeto, tipo_servico]):
+            return JsonResponse({'erro': 'Todos os campos são obrigatórios'}, status=400)
+
+        valor = prever_orcamento(descricao, nome_projeto, tipo_servico)
+
+        return JsonResponse({'valor_previsto': round(valor, 2)})
+
+    return JsonResponse({'erro': 'Método não permitido'}, status=405)
