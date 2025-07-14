@@ -4,6 +4,9 @@
 Sistema criado para gerir e acompanhar os serviços realizados pela empresa, incluindo
 orçamentos e acompanhamento de custos de projeto a projeto.
 
+####projeto tem processamento LM para gerar orçamentos, realizado um pre orçamento,
+com base no banco de dados.
+
 Projeto desenvolvido em Python, framework Django.
 
 Para rodar o projeto instale as dependencias.
