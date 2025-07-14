@@ -37,9 +37,9 @@ class Servico(models.Model):
         ('Dezembro', 'Dez'),
     ]
 
-    cliente = models.CharField("Nome do cliente", max_length=150, null=False, blank=False)
+    cliente = models.CharField(verbose_name="Nome do cliente", max_length=150, null=False, blank=False)
     telefone = models.CharField(max_length=15, null=False, blank=False)
-    tipo_serviço = models.CharField(choices=tipo_servicos, max_length=14, default='Eng_Solar')
+    tipo_servico = models.CharField(choices=tipo_servicos, max_length=14, default='Eng_Solar')
     status = models.CharField(choices=status_servico, max_length=10, default='V')
     cidade = models.CharField(max_length=150, blank=True, null=True)
     valor_empreendimento = models.DecimalField(max_digits=10, decimal_places=2)

@@ -23,7 +23,12 @@ Rode as migrações do projeto.
 python manage.py migrate
 `````
 
-banco de dados utilizado neste projeto foi o Postegresql
+Caso não queira executar pelo docker, execute o:
+`````bash
+python manage.py runserve
+`````
+
+banco de dados utilizado em operação neste projeto foi o Postegresql
 
 
 projeto rodando em docker.

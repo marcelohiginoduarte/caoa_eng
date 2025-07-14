@@ -177,7 +177,7 @@ def detalhes_servico_json(request, id):
     data = {
         'cliente': ver_detalhe_servico.cliente,
         'telefone': ver_detalhe_servico.telefone,
-        'tipo_serviço': ver_detalhe_servico.tipo_serviço,
+        'tipo_serviço': ver_detalhe_servico.tipo_servico,
         'status': ver_detalhe_servico.status,
         'valor_empreendimento': ver_detalhe_servico.valor_empreendimento,
         'valor_custos': ver_detalhe_servico.valor_custos,

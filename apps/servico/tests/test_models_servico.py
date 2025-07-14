@@ -14,7 +14,7 @@ def test_servico_models_criar_servico():
     servico = Servico.objects.create(
         cliente="Cliente Teste",
         telefone="1234567890",
-        tipo_serviço="Eng_Solar",
+        tipo_servico="Eng_Solar",
         status="V",
         cidade="Cidade Teste",
         valor_empreendimento=1000.00,
@@ -43,7 +43,7 @@ def test_servico_models_save_desativa_projeto_ativo_quando_status_concluido():
     servico = Servico.objects.create(
         cliente="Cliente Teste",
         telefone="1234567890",
-        tipo_serviço="Eng_Solar",
+        tipo_servico="Eng_Solar",
         status="C",
         cidade="Cidade Teste",
         valor_empreendimento=1000.00,
@@ -73,7 +73,7 @@ def test_servico_models_clean_valida_telefone():
     servico = Servico(
         cliente="Cliente Teste",
         telefone="telefone_invalido",
-        tipo_serviço="Eng_Solar",
+        tipo_servico="Eng_Solar",
         status="V",
         cidade="Cidade Teste",
         valor_empreendimento=1000.00,
