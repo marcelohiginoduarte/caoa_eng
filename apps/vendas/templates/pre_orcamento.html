@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% load custom_filters %}
+
+{% block material %}
+
+<form method="post">
+    {% csrf_token %}
+    <label>Descrição:</label>
+    <input type="text" name="descricao" required><br>
+
+    <label>Nome do Projeto:</label>
+    <input type="text" name="nome_projeto" required><br>
+
+    <label>Tipo de Serviço:</label>
+    <input type="text" name="tipo_servico" required><br>
+
+    <button type="submit">Gerar Pré-Orçamento</button>
+</form>
+
+{% if valor_previsto %}
+    <h3>Pré-orçamento estimado: R$ {{ valor_previsto }}</h3>
+{% endif %}
+
+{% endblock %}

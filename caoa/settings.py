@@ -31,11 +31,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'apps.servico',
+    'servico',
     'vendas',
     'lista_vendedores',
     'relatorios',
-    'apps.acompanhamentosfinanceiroprojeto',
+    'user',
+    'acompanhamentosfinanceiroprojeto',
     'django.contrib.admindocs',
 ]
 

@@ -2,9 +2,50 @@
 {% block subtitulo%} <h3> Cadastrar Vendedor</h3>{% endblock %}
 
 {% block material %}
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Cadastrar</button>
-    </form>
+<div class="container mt-4">
+    <div class="card shadow rounded-4">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Cadastrar Vendedor</h4>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.nome.id_for_label }}" class="form-label">{{ form.nome.label }}</label>
+                        {{ form.nome }}
+                        {% if form.nome.errors %}
+                            <div class="text-danger small">{{ form.nome.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.Telefone.id_for_label }}" class="form-label">{{ form.Telefone.label }}</label>
+                        {{ form.Telefone }}
+                        {% if form.Telefone.errors %}
+                            <div class="text-danger small">{{ form.Telefone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.pix.id_for_label }}" class="form-label">{{ form.pix.label }}</label>
+                        {{ form.pix }}
+                        {% if form.pix.errors %}
+                            <div class="text-danger small">{{ form.pix.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.comissao_venda.id_for_label }}" class="form-label">{{ form.comissao_venda.label }}</label>
+                        {{ form.comissao_venda }}
+                        {% if form.comissao_venda.errors %}
+                            <div class="text-danger small">{{ form.comissao_venda.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary rounded-pill">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

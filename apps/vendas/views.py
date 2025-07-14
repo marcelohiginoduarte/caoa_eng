@@ -9,6 +9,14 @@ from lista_vendedores.models import ListaVendedores
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+import joblib
+import os
+import pandas as pd
+from django.views import View
+
+
+MODELO_PATH = os.path.join('modelo_lm', 'modelo_previsao_valor.pkl')
+ENCODER_PATH = os.path.join('modelo_lm', 'encoder_descricoes.pkl')
 
 @login_required 
 def CadastrarVenda(request):
@@ -110,7 +118,6 @@ def detalhe_vendas(request, id):
     return JsonResponse(data)
 
 
-
 class AtualizarVenda(UpdateView):
     model = Venda
     template_name = 'venda_atualizar.html'
@@ -122,3 +129,32 @@ class DeletarVenda(DeleteView):
     model = Venda
     template_name = 'venda__confirm_delete.html'
     success_url = reverse_lazy('vendasporvendedor')
+
+
+class PreOrcamentoView(View):
+    def get(self, request):
+        return render(request, 'pre_orcamento.html')
+
+    def post(self, request):
+        descricao = request.POST.get('descricao')
+        nome_projeto = request.POST.get('nome_projeto')
+        tipo_servico = request.POST.get('tipo_servico')
+
+        modelo = joblib.load(MODELO_PATH)
+        encoder = joblib.load(ENCODER_PATH)
+
+        df = pd.DataFrame([{
+            'descricao': descricao,
+            'nome_projeto': nome_projeto,
+            'tipo_servico': tipo_servico
+        }])
+        x_encoded = encoder.transform(df)
+
+        valor_previsto = modelo.predict(x_encoded)[0]
+
+        return render(request, 'pre_orcamento.html', {
+            'valor_previsto': round(valor_previsto, 2),
+            'descricao': descricao,
+            'nome_projeto': nome_projeto,
+            'tipo_servico': tipo_servico
+        })
