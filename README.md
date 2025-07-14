@@ -1,6 +1,9 @@
 # Caoa Engenharia
 ### Projeto de gestão de uma empresa de energia solar.
 
+Sistema criado para gerir e acompanhar os serviços realizados pela empresa, incluindo
+orçamentos e acompanhamento de custos de projeto a projeto.
+
 Projeto desenvolvido em Python, framework Django.
 
 Para rodar o projeto instale as dependencias.
