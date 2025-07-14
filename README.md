@@ -1,6 +1,8 @@
 # Caoa Engenharia
 ### Projeto de gestão de uma empresa de energia solar.
 
+## Este projeto é desenvolvido por Marcelo Higino, e ainda esta em Desenvolvimento!
+
 Sistema criado para gerir e acompanhar os serviços realizados pela empresa, incluindo
 orçamentos e acompanhamento de custos de projeto a projeto.
 
