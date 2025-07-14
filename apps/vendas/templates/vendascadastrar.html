@@ -1,12 +1,114 @@
 {% extends 'index.html' %}
-{% block subtitulo%} <h3> Cadastrar Vendas</h3>{% endblock %}
-
+{% load widget_tweaks %}
+{% block subtitulo %}<h3>Cadastrar Vendas</h3>{% endblock %}
 
 {% block material %}
-    <br>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Cadastrar</button>
-    </form>
+<div class="container mt-4">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">Cadastro de Venda</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <ul class="nav nav-tabs mb-3" id="vendaTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="cliente-tab" data-bs-toggle="tab" data-bs-target="#cliente" type="button" role="tab">Dados do Cliente</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">Informações da Venda</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="documentos-tab" data-bs-toggle="tab" data-bs-target="#documentos" type="button" role="tab">Documentos</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="vendaTabsContent">
+                    <div class="tab-pane fade show active" id="cliente" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cliente</label>
+                                {{ form.cliente|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Serviço</label>
+                                {{ form.servico|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Telefone</label>
+                                {{ form.telefone|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                {{ form.email|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cidade</label>
+                                {{ form.cidade|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vendedor</label>
+                                {{ form.vendedor|add_class:"form-control" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="info" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Valor</label>
+                                {{ form.valor|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Consumo</label>
+                                {{ form.consumo|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Mês</label>
+                                {{ form.mes|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Ano</label>
+                                {{ form.ano|add_class:"form-control" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="documentos" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto Documento</label>
+                                {{ form.foto_documento|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto Endereço</label>
+                                {{ form.foto_endereco|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto Contracheque</label>
+                                {{ form.foto_contracheque|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Proposta</label>
+                                {{ form.proposta|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contrato</label>
+                                {{ form.contrato|add_class:"form-control" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-success btn-lg rounded-3">
+                        <i class="bi bi-save me-2"></i> Cadastrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
+

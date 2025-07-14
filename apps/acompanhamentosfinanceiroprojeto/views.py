@@ -47,17 +47,18 @@ def criar_despesa_projeto(request):
 @login_required
 def ver_despesas_projeto(request):
     if not request.user.groups.filter(name='direcao').exists():
-        return request(request, 'sem_acesso.html')
+        return render(request, 'sem_acesso.html') 
+
     projeto_filtro = request.GET.get('projeto', '') 
     projetos = Servico.objects.all()  
-    custos = AcompanhamentoDespesasProjeto.objects.all()  
-    
+    custos = list(AcompanhamentoDespesasProjeto.objects.all())
+
     if projeto_filtro:
         projeto_selecionado = Servico.objects.filter(cliente=projeto_filtro).first()
         if projeto_selecionado:
-            custos = custos.filter(projeto=projeto_selecionado) 
+            custos = list(AcompanhamentoDespesasProjeto.objects.filter(projeto=projeto_selecionado))
             valor_empreendimento = projeto_selecionado.valor_empreendimento
-            total_valor = custos.aggregate(total=Sum('valor'))['total'] or 0 
+            total_valor = sum(c.valor for c in custos)
             
             if valor_empreendimento > 0:
                 porcentagem = (total_valor / valor_empreendimento) * 100
@@ -70,7 +71,7 @@ def ver_despesas_projeto(request):
             porcentagem = 0
             saldo_restante = 0
     else:
-        total_valor = custos.aggregate(total=Sum('valor'))['total'] or 0
+        total_valor = sum(c.valor for c in custos)
         porcentagem = 0
         saldo_restante = 0
 

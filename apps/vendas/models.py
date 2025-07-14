@@ -81,7 +81,7 @@ class Venda(models.Model):
                 Servico.objects.create(
                     cliente=self.cliente,
                     telefone=self.telefone,
-                    tipo_serviço=self.servico,
+                    tipo_servico=self.servico,
                     cidade=self.cidade,
                     status='V',
                     valor_empreendimento=self.valor,
