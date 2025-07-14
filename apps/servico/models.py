@@ -1,5 +1,5 @@
 from django.db import models
-from .validators import validar_telefone
+from servico.validators import validar_telefone
 from lista_vendedores.models import ListaVendedores
 from django.db.models import Sum
 

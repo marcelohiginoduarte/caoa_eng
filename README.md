@@ -25,7 +25,7 @@ python manage.py migrate
 
 Caso não queira executar pelo docker, execute o:
 `````bash
-python manage.py runserve
+python manage.py runserver
 `````
 
 banco de dados utilizado em operação neste projeto foi o Postegresql

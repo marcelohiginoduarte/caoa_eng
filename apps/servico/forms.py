@@ -1,5 +1,5 @@
 from django import forms
-from .models import Servico
+from servico.models import Servico
 
 class CadastrarServicoforms(forms.ModelForm):
     class Meta:
@@ -7,7 +7,7 @@ class CadastrarServicoforms(forms.ModelForm):
         fields = [
             'cliente',
             'telefone',
-            'tipo_serviço',
+            'tipo_servico',
             'status',
             'cidade',
             'valor_empreendimento',
