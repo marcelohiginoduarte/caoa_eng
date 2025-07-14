@@ -31,4 +31,9 @@ projeto rodando em docker.
 docker-compose up --build
 `````
 
+Para este projetos os testes estão sendo realizados pelo pytest.
+`````bash
+pytest -v
+`````
+
 ![Diagrama ER](diagram.png)
